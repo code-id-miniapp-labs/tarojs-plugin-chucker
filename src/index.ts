@@ -62,6 +62,24 @@ export default (ctx: IPluginContext, options: ChuckerPluginOptions = {}) => {
         .set(userPagePathUnix + ".js", templatePath)
         .set(userPagePathUnix + ".jsx", templatePath);
 
+      // Force resolve React, Taro, and Taro components from the host project's node_modules
+      // to prevent duplicate library instances (e.g. invalid hook call with useState).
+      const hostNodeModules = ctx.paths.nodeModulesPath || path.resolve(ctx.paths.appPath, "node_modules");
+      if (hostNodeModules) {
+        const reactPath = path.resolve(hostNodeModules, "react");
+        if (fs.existsSync(reactPath)) {
+          chain.resolve.alias.set("react", reactPath);
+        }
+        const taroPath = path.resolve(hostNodeModules, "@tarojs/taro");
+        if (fs.existsSync(taroPath)) {
+          chain.resolve.alias.set("@tarojs/taro", taroPath);
+        }
+        const componentsPath = path.resolve(hostNodeModules, "@tarojs/components");
+        if (fs.existsSync(componentsPath)) {
+          chain.resolve.alias.set("@tarojs/components", componentsPath);
+        }
+      }
+
       chain.module
         .rule("chucker-app-injector")
         .test((resourcePath: string) => {
