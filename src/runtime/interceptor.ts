@@ -380,16 +380,98 @@ export function initInterceptors() {
     const setupNativeInterceptor = (original: any) => {
       if (typeof original !== "function" || original.isChuckerOverridden) return original;
 
-      const fn = function (this: any, name: string, args: any, ...rest: any[]) {
+      const fn = function (this: any, name: any, args: any, ...rest: any[]) {
         const id = "nat_" + Math.random().toString(36).substring(2, 9);
         const startTime = Date.now();
+
+        let actualName = "NATIVE_CALL";
+        let actualArgs = args;
+        let finalArgs = args;
+
+        if (typeof name === "string") {
+          actualName = name;
+          if (args && typeof args === "object") {
+            finalArgs = { ...args };
+            const originalSuccess = args.success;
+            const originalFail = args.fail;
+
+            finalArgs.success = function (res: any) {
+              if (markCompleted(id)) {
+                const duration = Date.now() - startTime;
+                chuckerStore.handleRequestComplete({
+                  id,
+                  status: "success",
+                  responseData: res,
+                  duration,
+                });
+              }
+              if (originalSuccess) return originalSuccess.apply(this, arguments as any);
+            };
+
+            finalArgs.fail = function (err: any) {
+              if (markCompleted(id)) {
+                const duration = Date.now() - startTime;
+                chuckerStore.handleRequestComplete({
+                  id,
+                  status: "fail",
+                  error: err
+                    ? typeof err === "object"
+                      ? JSON.stringify(err)
+                      : String(err)
+                    : "Native call failed",
+                  duration,
+                });
+              }
+              if (originalFail) return originalFail.apply(this, arguments as any);
+            };
+          }
+        } else if (name && typeof name === "object") {
+          actualName = name.api_name || "NATIVE_CALL";
+          actualArgs = name.data || name;
+
+          const clonedObj = { ...name };
+          const originalSuccess = name.success;
+          const originalFail = name.fail;
+
+          clonedObj.success = function (res: any) {
+            if (markCompleted(id)) {
+              const duration = Date.now() - startTime;
+              chuckerStore.handleRequestComplete({
+                id,
+                status: "success",
+                responseData: res,
+                duration,
+              });
+            }
+            if (originalSuccess) return originalSuccess.apply(this, arguments as any);
+          };
+
+          clonedObj.fail = function (err: any) {
+            if (markCompleted(id)) {
+              const duration = Date.now() - startTime;
+              chuckerStore.handleRequestComplete({
+                id,
+                status: "fail",
+                error: err
+                  ? typeof err === "object"
+                    ? JSON.stringify(err)
+                    : String(err)
+                  : "Native call failed",
+                duration,
+              });
+            }
+            if (originalFail) return originalFail.apply(this, arguments as any);
+          };
+
+          name = clonedObj;
+        }
 
         chuckerStore.handleRequestStart({
           id,
           type: "native",
           method: "NATIVE",
-          url: name,
-          requestData: args,
+          url: actualName,
+          requestData: actualArgs,
           startTime,
         });
 
@@ -410,44 +492,6 @@ export function initInterceptors() {
               });
             }
             return lastArg.apply(this, arguments as any);
-          };
-        }
-
-        // Hook success/fail callbacks within the arguments object
-        let finalArgs = args;
-        if (args && typeof args === "object") {
-          finalArgs = { ...args };
-          const originalSuccess = args.success;
-          const originalFail = args.fail;
-
-          finalArgs.success = function (res: any) {
-            if (markCompleted(id)) {
-              const duration = Date.now() - startTime;
-              chuckerStore.handleRequestComplete({
-                id,
-                status: "success",
-                responseData: res,
-                duration,
-              });
-            }
-            if (originalSuccess) return originalSuccess.apply(this, arguments as any);
-          };
-
-          finalArgs.fail = function (err: any) {
-            if (markCompleted(id)) {
-              const duration = Date.now() - startTime;
-              chuckerStore.handleRequestComplete({
-                id,
-                status: "fail",
-                error: err
-                  ? typeof err === "object"
-                    ? JSON.stringify(err)
-                    : String(err)
-                  : "Native call failed",
-                duration,
-              });
-            }
-            if (originalFail) return originalFail.apply(this, arguments as any);
           };
         }
 

@@ -262,7 +262,7 @@ export const Chucker: React.FC = () => {
                   display: "block",
                 }}
               >
-                {selectedLog.url}
+                {typeof selectedLog.url === "object" ? JSON.stringify(selectedLog.url) : selectedLog.url}
               </Text>
             </View>
             {selectedLog.type === "network" && (
@@ -375,7 +375,7 @@ export const Chucker: React.FC = () => {
                       URL Path / Identifier
                     </Text>
                     <Text style={{ fontSize: "14px", wordBreak: "break-all" }}>
-                      {selectedLog.url}
+                      {typeof selectedLog.url === "object" ? JSON.stringify(selectedLog.url) : selectedLog.url}
                     </Text>
                   </View>
 
@@ -776,7 +776,7 @@ export const Chucker: React.FC = () => {
                         display: "block",
                       }}
                     >
-                      {log.url}
+                      {typeof log.url === "object" ? JSON.stringify(log.url) : log.url}
                     </Text>
                   </View>
 
