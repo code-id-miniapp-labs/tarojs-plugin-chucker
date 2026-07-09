@@ -1,0 +1,31 @@
+{
+  "files.associations": {
+    "*.wxss": "css",
+    "*.acss": "css",
+    "*.ttss": "css",
+    "*.qss": "css",
+    "*.jxss": "css",
+    "*.scss": "scss"
+  },
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript",
+    "javascript": "javascript",
+    "javascriptreact": "javascript",
+    "wxml": "html"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "tailwindCSS.classAttributes": ["class", "className", "hover-class"],
+  "eslint.runtime": "node",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "never",
+    "source.fixAll.eslint": "explicit",
+    "source.format.oxc": "always"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  }
+}

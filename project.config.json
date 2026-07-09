@@ -1,0 +1,47 @@
+{
+	"projectid": "touristId_plugin%20chucker",
+	"setting": {
+		"urlCheck": true,
+		"es6": true,
+		"postcss": true,
+		"minified": true,
+		"newFeature": true,
+		"autoAudits": false,
+		"nodeModules": true,
+		"uploadWithSourceMap": true,
+		"uglifyFileName": true,
+		"remoteDebugLogEnable": true,
+		"prefetch": false
+	},
+	"TCSASLibVersion": "2.2.14",
+	"createTime": 1783499210101,
+	"accessTime": 1783499210101,
+	"packOptions": {
+		"ignore": []
+	},
+	"debugOptions": {
+		"hidedInDevtools": []
+	},
+	"TCSASappid": "touristId",
+	"projectname": "plugin%20chucker",
+	"scripts": {},
+	"compileType": "miniprogram",
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"currentL": -1,
+			"list": []
+		},
+		"miniprogram": {
+			"current": -1,
+			"list": []
+		}
+	}
+}

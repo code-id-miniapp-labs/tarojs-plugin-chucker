@@ -1,0 +1,13 @@
+# Exclude monorepo example and unit tests from published npm package
+example/
+tests/
+
+# Exclude configuration files
+jest.config.js
+jest.setup.js
+tsconfig.json
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
+# Exclude source files (only publish the dist directory)
+src/

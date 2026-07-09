@@ -1,0 +1,53 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Build and distribution directories
+dist/
+out/
+build/
+example/dist/
+example/.swc/
+
+# IDE and Editor files
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and databases
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files and caches
+.cache/
+.eslintcache
+.stylelintcache
+.npm/
+.tmp/
+.temp/
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
