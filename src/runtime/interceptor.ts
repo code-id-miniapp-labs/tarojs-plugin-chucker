@@ -3,7 +3,7 @@ import { chuckerStore } from "./store";
 
 export interface ChuckerLog {
   id: string;
-  type: "network" | "native";
+  type: "network" | "native" | (string & {});
   method: string;
   url: string;
   requestHeaders?: Record<string, string>;
@@ -27,6 +27,56 @@ function markCompleted(id: string): boolean {
   setTimeout(() => completedIds.delete(id), 30000);
   return true;
 }
+
+/**
+ * Chucker interceptor for Taro.addInterceptor.
+ * Uses the official onion-model chain to intercept Taro.request calls.
+ */
+const chuckerRequestInterceptor: Taro.interceptor = (chain: Taro.Chain) => {
+  const requestParams = chain.requestParams as Taro.request.Option;
+  const { method = "GET", url, header, data } = requestParams;
+
+  const id = "req_" + Math.random().toString(36).substring(2, 9);
+  const startTime = Date.now();
+
+  chuckerStore.handleRequestStart({
+    id,
+    type: "network",
+    method: method.toUpperCase(),
+    url,
+    requestHeaders: header || {},
+    requestData: data,
+    startTime,
+  });
+
+  return chain.proceed(requestParams).then(
+    (res: Taro.request.SuccessCallbackResult) => {
+      if (markCompleted(id)) {
+        const duration = Date.now() - startTime;
+        chuckerStore.handleRequestComplete({
+          id,
+          status: res.statusCode || 200,
+          responseHeaders: res.header || {},
+          responseData: res.data,
+          duration,
+        });
+      }
+      return res;
+    },
+    (err: TaroGeneral.CallbackResult) => {
+      if (markCompleted(id)) {
+        const duration = Date.now() - startTime;
+        chuckerStore.handleRequestComplete({
+          id,
+          status: "fail",
+          error: err ? err.errMsg || JSON.stringify(err) : "Request failed",
+          duration,
+        });
+      }
+      throw err;
+    },
+  );
+};
 
 // Helper to proxy custom methods/properties (like abort, progress callbacks)
 // from the original request/upload/download task to the hijacked Promise
@@ -57,108 +107,10 @@ function proxyTask(target: any, source: any) {
 }
 
 export function initInterceptors() {
-  // 1. Intercept Taro.request
-  const originalRequest = Taro.request;
-  if (typeof originalRequest === "function") {
-    (Taro as any).request = function (options: any): any {
-      if (!options) return (originalRequest as any).apply(this, arguments as any);
+  // 1. Intercept Taro.request via Taro.addInterceptor (official API)
+  Taro.addInterceptor(chuckerRequestInterceptor);
 
-      const id = "req_" + Math.random().toString(36).substring(2, 9);
-      const startTime = Date.now();
-      const { url, method = "GET", header, data } = options;
-
-      chuckerStore.handleRequestStart({
-        id,
-        type: "network",
-        method: method.toUpperCase(),
-        url,
-        requestHeaders: header || {},
-        requestData: data,
-        startTime,
-      });
-
-      const clonedOptions = { ...options };
-      const originalSuccess = options.success;
-      const originalFail = options.fail;
-
-      clonedOptions.success = function (res: any) {
-        if (markCompleted(id)) {
-          const duration = Date.now() - startTime;
-          chuckerStore.handleRequestComplete({
-            id,
-            status: res.statusCode || 200,
-            responseHeaders: res.header || res.headers || {},
-            responseData: res.data,
-            duration,
-          });
-        }
-        if (originalSuccess) return originalSuccess.apply(this, arguments as any);
-      };
-
-      clonedOptions.fail = function (err: any) {
-        if (markCompleted(id)) {
-          const duration = Date.now() - startTime;
-          chuckerStore.handleRequestComplete({
-            id,
-            status: "fail",
-            error: err ? err.errMsg || JSON.stringify(err) : "Request failed",
-            duration,
-          });
-        }
-        if (originalFail) return originalFail.apply(this, arguments as any);
-      };
-
-      try {
-        const args = [clonedOptions, ...Array.prototype.slice.call(arguments, 1)];
-        const promise = (originalRequest as any).apply(this, args);
-        if (promise && typeof promise.then === "function") {
-          const hijackedPromise = promise.then(
-            (res: any) => {
-              if (markCompleted(id)) {
-                const duration = Date.now() - startTime;
-                chuckerStore.handleRequestComplete({
-                  id,
-                  status: res.statusCode || 200,
-                  responseHeaders: res.header || res.headers || {},
-                  responseData: res.data,
-                  duration,
-                });
-              }
-              return res;
-            },
-            (err: any) => {
-              if (markCompleted(id)) {
-                const duration = Date.now() - startTime;
-                chuckerStore.handleRequestComplete({
-                  id,
-                  status: "fail",
-                  error: err ? err.errMsg || JSON.stringify(err) : "Request failed",
-                  duration,
-                });
-              }
-              throw err;
-            },
-          );
-          return proxyTask(hijackedPromise, promise);
-        }
-        return promise;
-      } catch (e: any) {
-        if (markCompleted(id)) {
-          const duration = Date.now() - startTime;
-          chuckerStore.handleRequestComplete({
-            id,
-            status: "fail",
-            error: e ? e.message || String(e) : "Request error",
-            duration,
-          });
-        }
-        throw e;
-      }
-    };
-    (Taro as any).request.isChuckerOverridden = true;
-  }
-
-  // 2. Intercept Taro.uploadFile
+  // 2. Intercept Taro.uploadFile (addInterceptor doesn't cover uploadFile)
   const originalUploadFile = Taro.uploadFile;
   if (typeof originalUploadFile === "function") {
     (Taro as any).uploadFile = function (options: any): any {
@@ -270,10 +222,9 @@ export function initInterceptors() {
         throw e;
       }
     };
-    (Taro as any).uploadFile.isChuckerOverridden = true;
   }
 
-  // 3. Intercept Taro.downloadFile
+  // 3. Intercept Taro.downloadFile (addInterceptor doesn't cover downloadFile)
   const originalDownloadFile = Taro.downloadFile;
   if (typeof originalDownloadFile === "function") {
     (Taro as any).downloadFile = function (options: any): any {
@@ -370,10 +321,9 @@ export function initInterceptors() {
         throw e;
       }
     };
-    (Taro as any).downloadFile.isChuckerOverridden = true;
   }
 
-  // 4. Intercept wx.invokeNativePlugin
+  // 4. Intercept wx.invokeNativePlugin (not part of Taro's interceptor chain)
   // @ts-ignore
   const globalObj = typeof wx !== "undefined" ? wx : typeof my !== "undefined" ? my : null;
   if (globalObj) {

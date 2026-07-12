@@ -61,3 +61,95 @@ import Taro from "@tarojs/taro";
 
 Taro.navigateTo({ url: "/pages/chucker/index" });
 ```
+
+---
+
+## Custom Logging
+
+Beyond the automatic network interception, you can log **any custom event** into the Chucker console using the `chuckerStore` API. All custom entries appear alongside network logs in the same debugger UI.
+
+### Import
+
+```typescript
+import { chuckerStore } from "tarojs-plugin-chucker/runtime";
+```
+
+### One-shot logging — `chuckerStore.log()`
+
+Use `log()` to record a complete event in a single call. An `id` and `startTime` are auto-generated if omitted.
+
+```typescript
+// Log a WebSocket message
+chuckerStore.log({
+  type: "websocket",
+  method: "MESSAGE",
+  url: "wss://example.com/ws",
+  requestData: { event: "ping" },
+  status: "success",
+  responseData: { event: "pong" },
+});
+
+// Log a custom analytics event
+chuckerStore.log({
+  type: "analytics",
+  method: "TRACK",
+  url: "page_view",
+  requestData: { page: "/home", userId: "abc123" },
+  status: "sent",
+});
+```
+
+### Async tracking — `startTracking()` / `completeTracking()`
+
+For operations that have a measurable duration (e.g., GraphQL queries, RPC calls), use the tracking pair. Duration is calculated automatically.
+
+```typescript
+// Start tracking a GraphQL mutation
+const id = chuckerStore.startTracking({
+  type: "graphql",
+  method: "MUTATION",
+  url: "https://api.example.com/graphql",
+  requestData: { query: "mutation { createUser(name: \"Alice\") { id } }" },
+});
+
+// ... later when the response arrives
+chuckerStore.completeTracking(id, {
+  status: 200,
+  responseData: { data: { createUser: { id: 1 } } },
+});
+
+// You can also provide an explicit duration (in ms)
+chuckerStore.completeTracking(id, {
+  status: 200,
+  responseData: result,
+  duration: 350,
+});
+```
+
+### API Reference
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `chuckerStore.log(input)` | `string` (id) | Add a complete log entry in one call |
+| `chuckerStore.startTracking(input)` | `string` (id) | Begin tracking an async operation |
+| `chuckerStore.completeTracking(id, result?)` | `void` | Finalize a tracked operation |
+| `chuckerStore.getLogs()` | `ChuckerLog[]` | Get all current log entries |
+| `chuckerStore.clear()` | `void` | Clear all log entries |
+| `chuckerStore.subscribe(listener)` | `() => void` | Subscribe to log changes, returns unsubscribe function |
+
+### `CustomLogInput` fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `type` | `"network" \| "native" \| string` | ✅ | — |
+| `method` | `string` | ✅ | — |
+| `url` | `string` | ✅ | — |
+| `id` | `string` | ❌ | Auto-generated (`usr_xxxxx`) |
+| `startTime` | `number` | ❌ | `Date.now()` |
+| `requestHeaders` | `Record<string, string>` | ❌ | — |
+| `requestData` | `any` | ❌ | — |
+| `status` | `string \| number` | ❌ | — |
+| `responseHeaders` | `Record<string, string>` | ❌ | — |
+| `responseData` | `any` | ❌ | — |
+| `error` | `string` | ❌ | — |
+| `duration` | `number` | ❌ | — |

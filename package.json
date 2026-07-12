@@ -19,7 +19,13 @@
     "test": "jest",
     "lint": "oxlint src tests",
     "lint:fix": "oxlint --fix src tests",
-    "format": "oxfmt --write src tests"
+    "format": "oxfmt --write src tests",
+    "preversion": "pnpm run lint && pnpm run test && pnpm run build",
+    "postversion": "git push && git push --tags",
+    "release:patch": "npm version patch -m \"release: v%s\"",
+    "release:minor": "npm version minor -m \"release: v%s\"",
+    "release:major": "npm version major -m \"release: v%s\"",
+    "publish:npm": "pnpm run build && npm publish"
   },
   "keywords": [
     "taro",

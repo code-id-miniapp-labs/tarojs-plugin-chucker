@@ -63,3 +63,4 @@ export function initChucker(options?: ChuckerInitOptions) {
 
 export { Chucker, chuckerStore };
 export type { ChuckerLog } from "./interceptor";
+export type { CustomLogInput, TrackingCompleteInput } from "./store";

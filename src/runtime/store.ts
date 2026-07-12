@@ -3,6 +3,37 @@ import { ChuckerLog } from "./interceptor";
 
 export type Listener = (logs: ChuckerLog[]) => void;
 
+/** Input type for user-created log entries. `id` and `startTime` are auto-generated if omitted. */
+export interface CustomLogInput {
+  /** Custom identifier. Auto-generated if omitted. */
+  id?: string;
+  /** Log category. Use built-in "network"/"native" or any custom string like "websocket", "graphql", etc. */
+  type: ChuckerLog["type"];
+  /** Label for the operation (e.g. "GET", "SUBSCRIBE", "QUERY"). */
+  method: string;
+  /** URL or identifier for the operation. */
+  url: string;
+  requestHeaders?: Record<string, string>;
+  requestData?: any;
+  status?: string | number;
+  responseHeaders?: Record<string, string>;
+  responseData?: any;
+  error?: string;
+  /** Epoch timestamp in ms. Defaults to Date.now(). */
+  startTime?: number;
+  duration?: number;
+}
+
+/** Payload to finalize a tracked operation started with `startTracking()`. */
+export interface TrackingCompleteInput {
+  status?: string | number;
+  responseHeaders?: Record<string, string>;
+  responseData?: any;
+  error?: string;
+  /** If omitted, duration is calculated from startTime automatically. */
+  duration?: number;
+}
+
 class ChuckerStore {
   private logs: ChuckerLog[] = [];
   private listeners: Set<Listener> = new Set();
@@ -16,6 +47,10 @@ class ChuckerStore {
     if (this.isInitialized) return;
     this.isInitialized = true;
   }
+
+  // ──────────────────────────────────────────────
+  // Internal API (used by interceptors)
+  // ──────────────────────────────────────────────
 
   public handleRequestStart(log: ChuckerLog) {
     this.logs = [log, ...this.logs];
@@ -32,6 +67,86 @@ class ChuckerStore {
     });
     this.notify();
   }
+
+  // ──────────────────────────────────────────────
+  // Public API (for user-created log entries)
+  // ──────────────────────────────────────────────
+
+  /**
+   * Add a complete log entry in one call.
+   * Useful for logging one-shot events that don't need async tracking.
+   *
+   * @example
+   * ```ts
+   * chuckerStore.log({
+   *   type: "websocket",
+   *   method: "MESSAGE",
+   *   url: "wss://example.com/ws",
+   *   requestData: { event: "ping" },
+   *   status: "success",
+   *   responseData: { event: "pong" },
+   * });
+   * ```
+   */
+  public log(input: CustomLogInput): string {
+    const id = input.id || "usr_" + Math.random().toString(36).substring(2, 9);
+    const log: ChuckerLog = {
+      ...input,
+      id,
+      startTime: input.startTime || Date.now(),
+    };
+    this.handleRequestStart(log);
+    return id;
+  }
+
+  /**
+   * Start tracking an async operation. Returns the generated log `id`.
+   * Call `completeTracking(id, result)` when the operation finishes.
+   *
+   * @example
+   * ```ts
+   * const id = chuckerStore.startTracking({
+   *   type: "graphql",
+   *   method: "QUERY",
+   *   url: "https://api.example.com/graphql",
+   *   requestData: { query: "{ users { id name } }" },
+   * });
+   *
+   * // ... later when response arrives
+   * chuckerStore.completeTracking(id, {
+   *   status: 200,
+   *   responseData: { users: [...] },
+   * });
+   * ```
+   */
+  public startTracking(input: CustomLogInput): string {
+    const id = input.id || "usr_" + Math.random().toString(36).substring(2, 9);
+    const log: ChuckerLog = {
+      ...input,
+      id,
+      startTime: input.startTime || Date.now(),
+    };
+    this.handleRequestStart(log);
+    return id;
+  }
+
+  /**
+   * Complete a previously tracked operation.
+   * Duration is calculated automatically if not provided.
+   */
+  public completeTracking(id: string, result: TrackingCompleteInput = {}): void {
+    const existing = this.logs.find((log) => log.id === id);
+    const duration = result.duration ?? (existing ? Date.now() - existing.startTime : undefined);
+    this.handleRequestComplete({
+      id,
+      ...result,
+      duration,
+    });
+  }
+
+  // ──────────────────────────────────────────────
+  // Core
+  // ──────────────────────────────────────────────
 
   private trimLogs() {
     if (this.logs.length > this.maxLogs) {
