@@ -1,6 +1,6 @@
 {
   "name": "tarojs-plugin-chucker",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Chucker-like debugger plugin for Taro JS miniapps to track api requests, responses and native plugin calls",
   "main": "dist/index.js",
   "module": "dist/index.js",
