@@ -64,7 +64,8 @@ export default (ctx: IPluginContext, options: ChuckerPluginOptions = {}) => {
 
       // Force resolve React, Taro, and Taro components from the host project's node_modules
       // to prevent duplicate library instances (e.g. invalid hook call with useState).
-      const hostNodeModules = ctx.paths.nodeModulesPath || path.resolve(ctx.paths.appPath, "node_modules");
+      const hostNodeModules =
+        ctx.paths.nodeModulesPath || path.resolve(ctx.paths.appPath, "node_modules");
       if (hostNodeModules) {
         const reactPath = path.resolve(hostNodeModules, "react");
         if (fs.existsSync(reactPath)) {
@@ -169,7 +170,7 @@ export default (ctx: IPluginContext, options: ChuckerPluginOptions = {}) => {
           const styles = `
 .chucker-float-btn {
   position: fixed !important;
-  bottom: calc(env(safe-area-inset-bottom) + 135rpx) !important;
+  bottom: calc(env(safe-area-inset-bottom) + 200rpx) !important;
   right: 15px !important;
   width: 46px !important;
   height: 46px !important;

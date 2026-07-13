@@ -239,6 +239,8 @@ export function useVirtualList<T>(options: UseVirtualListOptions<T>): VirtualLis
     }
   }, [items, itemHeight, chunkSize, columns, disabled]);
 
+  const lastMeasuredHeightsRef = useRef<number[]>([]);
+
   useEffect(() => {
     if (disabled || vlChunks.length === 0) {
       disconnectAll();
@@ -279,17 +281,39 @@ export function useVirtualList<T>(options: UseVirtualListOptions<T>): VirtualLis
             setVlVisible([...visibleRef.current]);
             setVlStyles([...stylesRef.current]);
           } else if (!isIn && wasIn) {
+            // Measure the chunk's rendered height BEFORE hiding its content.
+            // The boundingClientRect query is async — we must capture the real height
+            // while the chunk is still rendered, otherwise we get 0px and the scroll
+            // space collapses, making it impossible to scroll back up.
             const query = runtimeTaro.createSelectorQuery();
             query
               .select("#vl-chunk-" + targetIndex)
               .boundingClientRect((rect: any) => {
-                if (rect) {
-                  const measuredHeight = rect.height || 0;
-                  visibleRef.current[targetIndex] = false;
-                  stylesRef.current[targetIndex] = "height: " + measuredHeight + "px;";
-                  setVlVisible([...visibleRef.current]);
-                  setVlStyles([...stylesRef.current]);
+                if (!rect) return;
+
+                let measuredHeight = rect.height;
+
+                // Calculate a minimum fallback height based on chunk content
+                const chunkLength = chunksRef.current[targetIndex]
+                  ? chunksRef.current[targetIndex].length
+                  : currentChunkSize;
+                const estimatedHeight = Math.ceil(chunkLength / columns) * itemHeight;
+
+                // If measured height is 0 or unreasonably small (race condition where
+                // content was already unmounted), use the last known good height or
+                // the estimated height to prevent scroll space from collapsing.
+                if (!measuredHeight || measuredHeight < estimatedHeight * 0.3) {
+                  measuredHeight =
+                    lastMeasuredHeightsRef.current[targetIndex] || estimatedHeight;
+                } else {
+                  // Cache this as a known good height
+                  lastMeasuredHeightsRef.current[targetIndex] = measuredHeight;
                 }
+
+                visibleRef.current[targetIndex] = false;
+                stylesRef.current[targetIndex] = "height: " + measuredHeight + "px;";
+                setVlVisible([...visibleRef.current]);
+                setVlStyles([...stylesRef.current]);
               })
               .exec();
           }
