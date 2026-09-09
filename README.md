@@ -1,40 +1,46 @@
-# tarojs-plugin-chucker
+# miniapp-chucker
 
-A Chucker-like debugger plugin for Taro JS miniapps. It intercepts, logs, and displays network requests and native plugin calls (`wx.invokeNativePlugin`) directly in your miniapp during Runtime.
+An in-app network request and native plugin call debugger for Mini Programs (WeChat, TCMPP, Alipay, ByteDance) and TaroJS applications.
 
-It automatically injects a floating trigger button into every page at build-time, which opens a dedicated full-screen debugger console.
-
----
-
-## Features
-
-- 🛰️ **API Request Interception**: Automatically hooks into `Taro.request`, `Taro.uploadFile`, and `Taro.downloadFile`.
-- 🔌 **WeChat Native Plugins Tracker**: Intercepts `wx.invokeNativePlugin` parameters, callbacks, and Promise resolutions.
-- 🛠️ **Build-time Injection**: Automatically injects the WXML floating debugger button and layout styling onto every compiled page, and registers `/pages/chucker/index` in-memory.
-- 📋 **Copy to cURL**: Formats network calls into standard shell cURL commands and copies them to the clipboard with one tap.
-- 🔍 **Interactive Console**: Beautiful dark-mode UI overlay with tabs (Overview, Request, Response), search, filters (All, Network, Native), and JSON pretty-printing.
+Inspired by Android Chucker and Chrome DevTools, it captures network requests, uploads, downloads, and native plugin calls (`wx.invokeNativePlugin`), presenting them in a clean, dark-mode developer inspector directly inside your running Mini Program.
 
 ---
 
-## Installation
+## 📦 Monorepo Packages
 
-Install the package via `pnpm`, `yarn`, or `npm`:
+| Package | Version | Description |
+|---|---|---|
+| [`miniapp-chucker`](./packages/chucker) | [![npm](https://img.shields.io/npm/v/miniapp-chucker.svg)](https://www.npmjs.com/package/miniapp-chucker) | Core headless runtime: network interceptors & reactive state store |
+| [`miniapp-plugin-chucker`](./packages/miniapp-plugin-chucker) | [![npm](https://img.shields.io/npm/v/miniapp-plugin-chucker.svg)](https://www.npmjs.com/package/miniapp-plugin-chucker) | Native Mini Program inspector UI, floating button & automated sync CLI |
+| [`tarojs-plugin-chucker`](./packages/tarojs-plugin-chucker) | [![npm](https://img.shields.io/npm/v/tarojs-plugin-chucker.svg)](https://www.npmjs.com/package/tarojs-plugin-chucker) | TaroJS compile-time build plugin for Taro React/Vue miniapps |
+
+---
+
+## ✨ Features
+
+- 🛰️ **Automatic Request Interception**: Hooks into `wx.request` / `Taro.request`, `uploadFile`, and `downloadFile`.
+- 🔌 **Native Plugin Calls Tracker**: Intercepts `wx.invokeNativePlugin` arguments, callback responses, and error codes.
+- 🔍 **Clean Developer UI**: Fast, responsive inspector with status codes, latency, method badges, request/response headers, formatted JSON payloads, and error alerts.
+- 📋 **Copy to cURL**: Generate and copy shell-ready cURL commands with one tap.
+- 🛠️ **Automated CLI Sync for Native Mini Programs**: `npx miniapp-plugin-chucker` automatically syncs UI assets, configures `app.json`, and injects `<chucker-float />` into page templates.
+- 🧹 **Zero-Overhead Production Clean**: Easily strip all inspector UI, routes, and components for release builds with a 0.1 KB no-op stub.
+- 📊 **Custom Event Logging (`chuckerStore`)**: Record custom events, WebSocket messages, analytics tracking, and GraphQL queries alongside network calls.
+
+---
+
+## 🚀 Getting Started
+
+### Option A: Using with Taro JS (`tarojs-plugin-chucker`)
+
+#### 1. Install
 
 ```bash
 pnpm add tarojs-plugin-chucker --save-dev
 # or
-yarn add tarojs-plugin-chucker --dev
-# or
 npm install tarojs-plugin-chucker --save-dev
 ```
 
----
-
-## Configuration
-
-### 1. Register Compile-Time Plugin
-
-Add `tarojs-plugin-chucker` to the `plugins` array in your Taro project configuration:
+#### 2. Configure Plugin in `config/index.js`
 
 ```javascript
 // config/index.js
@@ -44,7 +50,7 @@ const config = {
     [
       "tarojs-plugin-chucker",
       {
-        // By default, only enabled in development. Set true to force enable.
+        // Enabled in development by default; set true to force enable
         enabled: process.env.NODE_ENV === "development",
       },
     ],
@@ -52,104 +58,154 @@ const config = {
 };
 ```
 
-## Dedicated Debugger Page
-
-To navigate to the debugger manually (e.g., from custom menus or gestures):
-
-```typescript
-import Taro from "@tarojs/taro";
-
-Taro.navigateTo({ url: "/pages/chucker/index" });
-```
+During build, the plugin automatically registers `/pages/chucker/index` in-memory and injects the floating debug button into every compiled page.
 
 ---
 
-## Custom Logging
+### Option B: Using with Pure Native Mini Programs (`miniapp-plugin-chucker`)
 
-Beyond the automatic network interception, you can log **any custom event** into the Chucker console using the `chuckerStore` API. All custom entries appear alongside network logs in the same debugger UI.
+For native WeChat Mini Programs, TCMPP, Alipay, or ByteDance projects without Taro or React.
 
-### Import
+#### 1. Install
 
-```typescript
-import { chuckerStore } from "tarojs-plugin-chucker/runtime";
+```bash
+npm install miniapp-plugin-chucker --save-dev
+# or
+pnpm add miniapp-plugin-chucker --save-dev
 ```
 
-### One-shot logging — `chuckerStore.log()`
+#### 2. Add Scripts to `package.json`
 
-Use `log()` to record a complete event in a single call. An `id` and `startTime` are auto-generated if omitted.
+```json
+{
+  "scripts": {
+    "sync": "miniapp-plugin-chucker",
+    "clean": "miniapp-plugin-chucker clean"
+  }
+}
+```
+
+#### 3. Run Sync
+
+```bash
+npm run sync
+```
+
+The CLI automatically:
+- Copies inspector UI pages & floating button into `miniprogram_npm/miniapp-plugin-chucker/`.
+- Registers `"miniprogram_npm/miniapp-plugin-chucker/pages/chucker/index"` in `app.json` `pages`.
+- Registers `"chucker-float"` in `app.json` `usingComponents`.
+- Injects `initChucker()` into `app.js`.
+- Injects `<chucker-float />` into all page `.wxml` files.
+
+#### 4. Production Clean
+
+When preparing a production release:
+```bash
+npm run clean
+```
+This strips Chucker routes, components, WXML tags, and replaces the package with a **0.1 KB no-op stub** for zero bundle overhead.
+
+---
+
+## 📊 Custom Event Logging (`chuckerStore`)
+
+Record custom operations (WebSocket, analytics, GraphQL) into the Chucker timeline using `chuckerStore`:
 
 ```typescript
-// Log a WebSocket message
+// In Taro:
+import { chuckerStore } from "tarojs-plugin-chucker/runtime";
+
+// In Native Mini Programs:
+const { chuckerStore } = require("miniapp-plugin-chucker");
+
+// One-shot event logging
 chuckerStore.log({
   type: "websocket",
   method: "MESSAGE",
-  url: "wss://example.com/ws",
+  url: "wss://api.example.com/ws",
   requestData: { event: "ping" },
   status: "success",
   responseData: { event: "pong" },
 });
 
-// Log a custom analytics event
-chuckerStore.log({
-  type: "analytics",
-  method: "TRACK",
-  url: "page_view",
-  requestData: { page: "/home", userId: "abc123" },
-  status: "sent",
-});
-```
-
-### Async tracking — `startTracking()` / `completeTracking()`
-
-For operations that have a measurable duration (e.g., GraphQL queries, RPC calls), use the tracking pair. Duration is calculated automatically.
-
-```typescript
-// Start tracking a GraphQL mutation
-const id = chuckerStore.startTracking({
+// Async operation tracking with duration calculation
+const trackingId = chuckerStore.startTracking({
   type: "graphql",
-  method: "MUTATION",
+  method: "QUERY",
   url: "https://api.example.com/graphql",
-  requestData: { query: "mutation { createUser(name: \"Alice\") { id } }" },
+  requestData: { query: "{ user { id name } }" },
 });
 
-// ... later when the response arrives
-chuckerStore.completeTracking(id, {
+// Complete operation later:
+chuckerStore.completeTracking(trackingId, {
   status: 200,
-  responseData: { data: { createUser: { id: 1 } } },
-});
-
-// You can also provide an explicit duration (in ms)
-chuckerStore.completeTracking(id, {
-  status: 200,
-  responseData: result,
-  duration: 350,
+  responseData: { data: { user: { id: 1, name: "Alice" } } },
 });
 ```
 
-### API Reference
+### `chuckerStore` API Reference
 
 | Method | Returns | Description |
-|--------|---------|-------------|
-| `chuckerStore.log(input)` | `string` (id) | Add a complete log entry in one call |
-| `chuckerStore.startTracking(input)` | `string` (id) | Begin tracking an async operation |
-| `chuckerStore.completeTracking(id, result?)` | `void` | Finalize a tracked operation |
-| `chuckerStore.getLogs()` | `ChuckerLog[]` | Get all current log entries |
-| `chuckerStore.clear()` | `void` | Clear all log entries |
-| `chuckerStore.subscribe(listener)` | `() => void` | Subscribe to log changes, returns unsubscribe function |
+|---|---|---|
+| `chuckerStore.log(input)` | `string` (id) | Add a completed log entry |
+| `chuckerStore.startTracking(input)` | `string` (id) | Start tracking an async event |
+| `chuckerStore.completeTracking(id, result?)` | `void` | Finalize a tracked event |
+| `chuckerStore.getLogs()` | `ChuckerLog[]` | Retrieve all current logs |
+| `chuckerStore.clear()` | `void` | Clear all logs |
+| `chuckerStore.subscribe(listener)` | `() => void` | Subscribe to log updates, returns unsubscribe callback |
 
-### `CustomLogInput` fields
+---
 
-| Field | Type | Required | Default |
-|-------|------|----------|---------|
-| `type` | `"network" \| "native" \| string` | ✅ | — |
-| `method` | `string` | ✅ | — |
-| `url` | `string` | ✅ | — |
-| `id` | `string` | ❌ | Auto-generated (`usr_xxxxx`) |
-| `startTime` | `number` | ❌ | `Date.now()` |
-| `requestHeaders` | `Record<string, string>` | ❌ | — |
-| `requestData` | `any` | ❌ | — |
-| `status` | `string \| number` | ❌ | — |
-| `responseHeaders` | `Record<string, string>` | ❌ | — |
-| `responseData` | `any` | ❌ | — |
-| `error` | `string` | ❌ | — |
-| `duration` | `number` | ❌ | — |
+## 📁 Repository Structure
+
+```
+tarojs-plugin-chucker/
+├── packages/
+│   ├── chucker/                  # miniapp-chucker (core runtime & store)
+│   ├── miniapp-plugin-chucker/   # miniapp-plugin-chucker (native inspector UI & CLI)
+│   └── tarojs-plugin-chucker/    # tarojs-plugin-chucker (Taro build plugin)
+└── example/
+    ├── native-plugin-chucker/    # Pure Native WeApp / TCMPP example
+    └── taro-app/                 # Taro React example application
+```
+
+---
+
+## 🛠️ Monorepo Development
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) >= 18
+- [pnpm](https://pnpm.io/) >= 9
+
+### Common Commands
+
+```bash
+# Install all dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+
+# Run Taro example app in watch mode
+pnpm dev:weapp
+
+# Sync assets to Native example
+pnpm sync:native
+
+# Clean Native example for production
+pnpm clean:native
+
+# Lint packages
+pnpm lint
+
+# Interactive release & publish (bumpp)
+pnpm release
+```
+
+---
+
+## 📄 License
+
+[ISC](./LICENSE)
