@@ -25,9 +25,9 @@
     "chucker": "./dist/cli/index.js"
   },
   "scripts": {
-    "prebuild": "cp ../chucker/src/store.ts ../chucker/src/interceptor.ts ../chucker/src/utils.ts src/",
+    "prebuild": "node ../../scripts/copy.js ../chucker/src/store.ts src/store.ts ../chucker/src/interceptor.ts src/interceptor.ts ../chucker/src/utils.ts src/utils.ts",
     "build": "tsc",
-    "postbuild": "cp -r src/components dist/ && cp -r src/pages dist/ && node ../../scripts/minify.js dist",
+    "postbuild": "node ../../scripts/copy.js src/components dist/components src/pages dist/pages && node ../../scripts/minify.js dist",
     "watch": "tsc -w",
     "prepare": "pnpm run build"
   },

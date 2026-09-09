@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "postbuild": "cp -r src/components dist/ && node ../../scripts/minify.js dist",
+    "postbuild": "node ../../scripts/copy.js src/components dist/components && node ../../scripts/minify.js dist",
     "watch": "tsc -w",
     "prepare": "pnpm run build"
   },
