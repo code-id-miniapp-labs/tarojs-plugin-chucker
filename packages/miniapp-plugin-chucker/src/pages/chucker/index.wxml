@@ -1,118 +1,120 @@
-<!-- miniapp-chucker: Chucker Inspector Page -->
-<view class="page">
+<!-- miniapp-chucker: Native Chucker Inspector Page -->
+<view class="chucker-page">
 
-  <!-- ══════════════════ HEADER ══════════════════ -->
-  <view class="header">
-    <view class="header-left">
-      <view class="icon-bug {{errorCount > 0 ? 'icon-bug--error' : ''}}">C</view>
-      <view>
+  <!-- ══════════════════ LIST VIEW ══════════════════ -->
+  <block wx:if="{{view === 'list'}}">
+    <!-- Header -->
+    <view class="header">
+      <view class="header-left">
         <text class="header-title">Chucker</text>
-        <text class="header-subtitle">{{logs.length}} request{{logs.length !== 1 ? 's' : ''}}{{errorCount > 0 ? ' · ' + errorCount + ' error' + (errorCount !== 1 ? 's' : '') : ''}}</text>
+        <view class="header-stats">
+          <text class="stat-badge">{{logs.length}}</text>
+          <text wx:if="{{errorCount > 0}}" class="stat-badge stat-badge--error">{{errorCount}} err</text>
+        </view>
+      </view>
+      <view class="header-right">
+        <view class="btn-clear" bindtap="onClear">
+          <text class="btn-clear-text">Clear</text>
+        </view>
       </view>
     </view>
-    <view class="header-actions">
-      <view class="btn-icon" bindtap="onClear">
-        <text class="btn-icon-text">🗑</text>
+
+    <!-- Toolbar: Filters + Search -->
+    <view class="toolbar">
+      <!-- Segmented filter tabs -->
+      <view class="segmented-control">
+        <view
+          class="seg-item {{filterType === 'all' ? 'seg-item--active' : ''}}"
+          bindtap="onSetFilter"
+          data-type="all"
+        >All</view>
+        <view
+          class="seg-item {{filterType === 'network' ? 'seg-item--active' : ''}}"
+          bindtap="onSetFilter"
+          data-type="network"
+        >Network</view>
+        <view
+          class="seg-item {{filterType === 'native' ? 'seg-item--active' : ''}}"
+          bindtap="onSetFilter"
+          data-type="native"
+        >Native</view>
+      </view>
+
+      <!-- Search bar -->
+      <view class="search-box">
+        <text class="search-icon">🔍</text>
+        <input
+          class="search-input"
+          placeholder="Filter URL, payload…"
+          placeholder-class="search-placeholder"
+          value="{{searchQuery}}"
+          bindinput="onSearch"
+        />
+        <view wx:if="{{searchQuery}}" class="search-clear-btn" bindtap="onClearSearch">
+          <text class="search-clear-icon">×</text>
+        </view>
       </view>
     </view>
-  </view>
 
-  <!-- ══════════════════ FILTER TABS ══════════════════ -->
-  <view class="tabs">
-    <view
-      class="tab {{filterType === 'all' ? 'tab--active' : ''}}"
-      bindtap="onSetFilter"
-      data-type="all"
-    >All</view>
-    <view
-      class="tab {{filterType === 'network' ? 'tab--active' : ''}}"
-      bindtap="onSetFilter"
-      data-type="network"
-    >Network</view>
-    <view
-      class="tab {{filterType === 'native' ? 'tab--active' : ''}}"
-      bindtap="onSetFilter"
-      data-type="native"
-    >Native</view>
-  </view>
-
-  <!-- ══════════════════ SEARCH ══════════════════ -->
-  <view class="search-bar">
-    <text class="search-icon">🔍</text>
-    <input
-      class="search-input"
-      placeholder="Search URL, headers, body…"
-      placeholder-class="search-placeholder"
-      value="{{searchQuery}}"
-      bindinput="onSearch"
-    />
-    <view wx:if="{{searchQuery}}" class="search-clear" bindtap="onClearSearch">
-      <text class="search-clear-text">✕</text>
-    </view>
-  </view>
-
-  <!-- ══════════════════ LOG LIST ══════════════════ -->
-  <view class="list-container" wx:if="{{view === 'list'}}">
-    <scroll-view scroll-y class="list-scroll">
+    <!-- Request List -->
+    <scroll-view scroll-y class="log-scroll">
       <!-- Empty state -->
       <view wx:if="{{filteredLogs.length === 0}}" class="empty-state">
-        <text class="empty-icon">📡</text>
-        <text class="empty-title">No requests yet</text>
-        <text class="empty-subtitle">Network calls will appear here</text>
+        <text class="empty-title">No transactions</text>
+        <text class="empty-desc">Network requests and native calls appear here</text>
       </view>
 
       <!-- Log items -->
       <view
         wx:for="{{filteredLogs}}"
         wx:key="id"
-        class="log-item {{item.status === 'fail' || (item.status >= 400 && item.status !== undefined) ? 'log-item--error' : item.status === undefined ? 'log-item--pending' : 'log-item--success'}}"
+        class="log-row {{item.statusClass === 'error' ? 'log-row--error' : item.statusClass === 'pending' ? 'log-row--pending' : ''}}"
         bindtap="onTapLog"
         data-id="{{item.id}}"
       >
-        <!-- Method badge -->
-        <view class="log-method-wrap">
-          <text class="log-method log-method--{{item.method | methodClass}}">{{item.method}}</text>
+        <!-- Badges column -->
+        <view class="log-badges">
+          <text class="method-tag method-tag--{{item.methodClass}}">{{item.method}}</text>
+          <text class="status-code status-code--{{item.statusClass}}">{{item.status !== undefined ? item.status : '…'}}</text>
         </view>
 
-        <!-- URL + meta -->
-        <view class="log-info">
+        <!-- URL & Meta -->
+        <view class="log-content">
           <text class="log-url">{{item.url}}</text>
           <view class="log-meta">
             <text class="log-time">{{item.timeLabel}}</text>
-            <text class="log-dot" wx:if="{{item.duration !== undefined}}"> · </text>
-            <text class="log-duration" wx:if="{{item.duration !== undefined}}">{{item.duration}}ms</text>
+            <block wx:if="{{item.duration !== undefined}}">
+              <text class="log-dot">·</text>
+              <text class="log-duration">{{item.duration}}ms</text>
+            </block>
           </view>
         </view>
 
-        <!-- Status badge -->
-        <view class="log-status-wrap">
-          <text class="log-status log-status--{{item.statusClass}}">{{item.status !== undefined ? item.status : '…'}}</text>
-        </view>
+        <!-- Right arrow -->
+        <text class="log-chevron">›</text>
       </view>
     </scroll-view>
-  </view>
+  </block>
 
   <!-- ══════════════════ DETAIL VIEW ══════════════════ -->
-  <view class="detail-container" wx:if="{{view === 'detail' && selectedLog}}">
-
-    <!-- Detail header -->
-    <view class="detail-header">
+  <block wx:if="{{view === 'detail' && selectedLog}}">
+    <!-- Detail Topbar -->
+    <view class="detail-bar">
       <view class="btn-back" bindtap="onBack">
-        <text class="btn-back-text">‹ Back</text>
+        <text class="btn-back-arrow">‹</text>
+        <text class="btn-back-text">Back</text>
       </view>
-      <view class="detail-header-url-wrap">
-        <text class="detail-header-url">{{selectedLog.url}}</text>
+      <view class="detail-title-wrap">
+        <text class="detail-title">{{selectedLog.method}} {{selectedLog.url}}</text>
       </view>
-      <view
-        wx:if="{{selectedLog.type === 'network'}}"
-        class="btn-curl"
-        bindtap="onCopyCurl"
-      >
-        <text class="btn-curl-text">cURL</text>
+      <view class="detail-actions">
+        <view wx:if="{{selectedLog.isNetwork}}" class="btn-curl" bindtap="onCopyCurl">
+          <text class="btn-curl-text">cURL</text>
+        </view>
       </view>
     </view>
 
-    <!-- Detail tabs -->
+    <!-- Detail Sub-tabs -->
     <view class="detail-tabs">
       <view
         class="detail-tab {{detailTab === 'overview' ? 'detail-tab--active' : ''}}"
@@ -131,120 +133,114 @@
       >RESPONSE</view>
     </view>
 
-    <!-- Detail content -->
+    <!-- Detail Scroll Area -->
     <scroll-view scroll-y class="detail-scroll">
 
-      <!-- ── OVERVIEW TAB ── -->
-      <view wx:if="{{detailTab === 'overview'}}" class="detail-content">
-
-        <!-- Status banner -->
-        <view class="status-banner status-banner--{{selectedLog.statusClass}}">
-          <view>
-            <text class="status-banner-label">Status</text>
-            <text class="status-banner-value status-value--{{selectedLog.statusClass}}">{{selectedLog.status !== undefined ? selectedLog.status : 'PENDING'}}</text>
+      <!-- ── 1. Overview ── -->
+      <view wx:if="{{detailTab === 'overview'}}" class="tab-panel">
+        <!-- Summary Strip -->
+        <view class="summary-strip summary-strip--{{selectedLog.statusClass}}">
+          <view class="summary-item">
+            <text class="summary-sub">STATUS</text>
+            <text class="summary-main status-code--{{selectedLog.statusClass}}">{{selectedLog.status !== undefined ? selectedLog.status : 'PENDING'}}</text>
           </view>
-          <view wx:if="{{selectedLog.duration !== undefined}}" class="status-banner-right">
-            <text class="status-banner-label">Latency</text>
-            <text class="status-banner-value status-value--default">{{selectedLog.duration}}<text class="status-banner-unit">ms</text></text>
+          <view wx:if="{{selectedLog.duration !== undefined}}" class="summary-item">
+            <text class="summary-sub">LATENCY</text>
+            <text class="summary-main">{{selectedLog.duration}}ms</text>
           </view>
-        </view>
-
-        <!-- Info cards -->
-        <view class="info-card">
-          <view class="info-card-header">
-            <text class="info-card-label">TYPE</text>
-          </view>
-          <view class="info-card-body">
-            <text class="info-card-value">{{selectedLog.type === 'native' ? 'Native Plugin Invocation' : 'Network Request'}}</text>
+          <view class="summary-item">
+            <text class="summary-sub">METHOD</text>
+            <text class="summary-main method-color--{{selectedLog.methodClass}}">{{selectedLog.method}}</text>
           </view>
         </view>
 
-        <view class="info-card">
-          <view class="info-card-header">
-            <text class="info-card-label">METHOD / API NAME</text>
+        <!-- Information Card -->
+        <view class="card">
+          <view class="card-row" bindtap="onCopyUrl">
+            <text class="card-label">URL / Path</text>
+            <view class="card-value-wrap">
+              <text class="card-value-mono">{{selectedLog.url}}</text>
+              <text class="card-hint">Tap to copy</text>
+            </view>
           </view>
-          <view class="info-card-body">
-            <text class="info-card-value info-card-value--method log-method--{{selectedLog.method | methodClass}}">{{selectedLog.method}}</text>
+          <view class="card-row">
+            <text class="card-label">Type</text>
+            <text class="card-value">{{selectedLog.type === 'native' ? 'Native Plugin Call' : 'HTTP Network Request'}}</text>
           </view>
-        </view>
-
-        <view class="info-card">
-          <view class="info-card-header">
-            <text class="info-card-label">URL / IDENTIFIER</text>
-          </view>
-          <view class="info-card-body">
-            <text class="code-text code-text--blue">{{selectedLog.url}}</text>
-          </view>
-        </view>
-
-        <view class="info-card">
-          <view class="info-card-header">
-            <text class="info-card-label">TIME INITIATED</text>
-          </view>
-          <view class="info-card-body">
-            <text class="info-card-value">{{selectedLog.startTimeLabel}}</text>
+          <view class="card-row">
+            <text class="card-label">Time Initiated</text>
+            <text class="card-value">{{selectedLog.startTimeLabel}}</text>
           </view>
         </view>
       </view>
 
-      <!-- ── REQUEST TAB ── -->
-      <view wx:if="{{detailTab === 'request'}}" class="detail-content">
-        <view wx:if="{{selectedLog.requestHeadersText}}" class="info-card">
-          <view class="info-card-header">
-            <text class="info-card-label">HEADERS</text>
-            <view class="btn-copy-small" bindtap="onCopyRequestHeaders">
-              <text class="btn-copy-small-text">Copy</text>
+      <!-- ── 2. Request ── -->
+      <view wx:if="{{detailTab === 'request'}}" class="tab-panel">
+        <!-- Request Headers -->
+        <view wx:if="{{selectedLog.requestHeadersText}}" class="card">
+          <view class="card-header">
+            <text class="card-header-title">Headers</text>
+            <view class="btn-mini-copy" bindtap="onCopyRequestHeaders">
+              <text class="btn-mini-copy-text">Copy</text>
             </view>
           </view>
-          <view class="info-card-body">
-            <text class="code-text code-text--blue">{{selectedLog.requestHeadersText}}</text>
+          <view class="code-block">
+            <text class="code-text code-text--headers">{{selectedLog.requestHeadersText}}</text>
           </view>
         </view>
 
-        <view class="info-card">
-          <view class="info-card-header">
-            <text class="info-card-label">BODY PAYLOAD</text>
-            <view wx:if="{{selectedLog.requestDataText}}" class="btn-copy-small" bindtap="onCopyRequestBody">
-              <text class="btn-copy-small-text">Copy</text>
+        <!-- Request Body -->
+        <view class="card">
+          <view class="card-header">
+            <text class="card-header-title">Payload Body</text>
+            <view wx:if="{{selectedLog.requestDataText}}" class="btn-mini-copy" bindtap="onCopyRequestBody">
+              <text class="btn-mini-copy-text">Copy</text>
             </view>
           </view>
-          <view class="info-card-body">
-            <text wx:if="{{selectedLog.requestDataText}}" class="code-text code-text--green">{{selectedLog.requestDataText}}</text>
-            <text wx:else class="info-card-empty">No body</text>
+          <view class="code-block">
+            <text wx:if="{{selectedLog.requestDataText}}" class="code-text code-text--body">{{selectedLog.requestDataText}}</text>
+            <text wx:else class="empty-code-note">No payload body</text>
           </view>
         </view>
       </view>
 
-      <!-- ── RESPONSE TAB ── -->
-      <view wx:if="{{detailTab === 'response'}}" class="detail-content">
-        <view wx:if="{{selectedLog.responseHeadersText}}" class="info-card">
-          <view class="info-card-header">
-            <text class="info-card-label">HEADERS</text>
-            <view class="btn-copy-small" bindtap="onCopyResponseHeaders">
-              <text class="btn-copy-small-text">Copy</text>
+      <!-- ── 3. Response ── -->
+      <view wx:if="{{detailTab === 'response'}}" class="tab-panel">
+        <!-- Error Alert -->
+        <view wx:if="{{selectedLog.error}}" class="error-box">
+          <text class="error-box-title">Error Encountered</text>
+          <text class="error-box-msg">{{selectedLog.error}}</text>
+        </view>
+
+        <!-- Response Headers -->
+        <view wx:if="{{selectedLog.responseHeadersText}}" class="card">
+          <view class="card-header">
+            <text class="card-header-title">Headers</text>
+            <view class="btn-mini-copy" bindtap="onCopyResponseHeaders">
+              <text class="btn-mini-copy-text">Copy</text>
             </view>
           </view>
-          <view class="info-card-body">
-            <text class="code-text code-text--blue">{{selectedLog.responseHeadersText}}</text>
+          <view class="code-block">
+            <text class="code-text code-text--headers">{{selectedLog.responseHeadersText}}</text>
           </view>
         </view>
 
-        <view class="info-card">
-          <view class="info-card-header">
-            <text class="info-card-label">RESPONSE BODY</text>
-            <view wx:if="{{selectedLog.responseDataText}}" class="btn-copy-small" bindtap="onCopyResponseBody">
-              <text class="btn-copy-small-text">Copy</text>
+        <!-- Response Body -->
+        <view class="card">
+          <view class="card-header">
+            <text class="card-header-title">Response Body</text>
+            <view wx:if="{{selectedLog.responseDataText}}" class="btn-mini-copy" bindtap="onCopyResponseBody">
+              <text class="btn-mini-copy-text">Copy</text>
             </view>
           </view>
-          <view class="info-card-body">
-            <text wx:if="{{selectedLog.error}}" class="code-text code-text--red">{{selectedLog.error}}</text>
-            <text wx:elif="{{selectedLog.responseDataText}}" class="code-text code-text--green">{{selectedLog.responseDataText}}</text>
-            <text wx:else class="info-card-empty">No response body</text>
+          <view class="code-block">
+            <text wx:if="{{selectedLog.responseDataText}}" class="code-text code-text--body">{{selectedLog.responseDataText}}</text>
+            <text wx:else class="empty-code-note">Empty response body</text>
           </view>
         </view>
       </view>
 
     </scroll-view>
-  </view>
+  </block>
 
 </view>

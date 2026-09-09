@@ -7,9 +7,12 @@
     "build": "pnpm -r --filter './packages/*' run build",
     "test": "pnpm -r --filter './packages/*' run test --passWithNoTests",
     "lint": "oxlint packages",
-    "dev:weapp": "pnpm --filter example run dev:weapp"
+    "dev:weapp": "pnpm --filter example run dev:weapp",
+    "sync:native": "pnpm --filter example-native-plugin-chucker run sync",
+    "clean:native": "pnpm --filter example-native-plugin-chucker run clean"
   },
   "devDependencies": {
+    "bumpp": "^12.3.0",
     "esbuild": "^0.28.2",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.73.0"

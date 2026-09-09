@@ -24,7 +24,7 @@ page {
   display: block;
   font-size: 38rpx;
   font-weight: 700;
-  color: #c9b99a;
+  color: #ffffff;
   margin-bottom: 8rpx;
 }
 
@@ -99,8 +99,8 @@ page {
 }
 
 .btn-success {
-  background-color: #1e1e2f !important;
-  color: #c9b99a !important;
-  border: 1rpx solid rgba(201, 185, 154, 0.4) !important;
+  background-color: #18181b !important;
+  color: #3b82f6 !important;
+  border: 1rpx solid #3b82f6 !important;
   font-weight: 700 !important;
 }

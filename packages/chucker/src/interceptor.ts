@@ -111,7 +111,7 @@ function patchNetworkMethod(
           : options.data;
 
       const logId = chuckerStore.startTracking({
-        type,
+        type: "network",
         method,
         url,
         requestHeaders,

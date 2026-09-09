@@ -4,7 +4,8 @@
   "private": true,
   "description": "Native Mini Program example for miniapp-plugin-chucker",
   "scripts": {
-    "sync": "miniapp-plugin-chucker"
+    "sync": "miniapp-plugin-chucker",
+    "clean": "miniapp-plugin-chucker clean"
   },
   "dependencies": {
     "miniapp-plugin-chucker": "workspace:*"

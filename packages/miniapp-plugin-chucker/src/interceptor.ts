@@ -91,9 +91,6 @@ function safePatchMethod(
   } catch (_e) {}
 }
 
-// ──────────────────────────────────────────────
-// Unified Network Call Interceptor (request, uploadFile, downloadFile)
-// ──────────────────────────────────────────────
 function patchNetworkMethod(
   api: any,
   methodName: "request" | "uploadFile" | "downloadFile",
@@ -114,7 +111,7 @@ function patchNetworkMethod(
           : options.data;
 
       const logId = chuckerStore.startTracking({
-        type,
+        type: "network",
         method,
         url,
         requestHeaders,
@@ -134,7 +131,12 @@ function patchNetworkMethod(
           chuckerStore.completeTracking(logId, {
             status,
             responseHeaders: responseHeaders || (res ? res.header || res.headers : {}),
-            responseData: type === "download" ? { tempFilePath: res && res.tempFilePath } : res ? res.data : undefined,
+            responseData:
+              type === "download"
+                ? { tempFilePath: res && res.tempFilePath }
+                : res
+                  ? res.data
+                  : undefined,
           });
         }
         if (typeof origSuccess === "function") {
@@ -157,12 +159,15 @@ function patchNetworkMethod(
 
       options.complete = function (this: any, res: any) {
         if (markCompleted(logId)) {
-          const isErr = !res || (res.statusCode && res.statusCode >= 400) || (res.errMsg && res.errMsg.includes("fail"));
+          const isErr =
+            !res ||
+            (res.statusCode && res.statusCode >= 400) ||
+            (res.errMsg && res.errMsg.includes("fail"));
           chuckerStore.completeTracking(logId, {
-            status: res && res.statusCode ? res.statusCode : (isErr ? "error" : "success"),
+            status: res && res.statusCode ? res.statusCode : isErr ? "error" : "success",
             responseHeaders: responseHeaders || (res ? res.header || res.headers : {}),
             responseData: res ? res.data : undefined,
-            error: isErr ? (res && (res.errMsg || res.message)) : undefined,
+            error: isErr ? res && (res.errMsg || res.message) : undefined,
           });
         }
         if (typeof origComplete === "function") {
@@ -200,9 +205,6 @@ function patchNetworkMethod(
   });
 }
 
-// ──────────────────────────────────────────────
-// Native Bridge Interceptor (wx.invokeNativePlugin)
-// ──────────────────────────────────────────────
 function patchInvokeNativePlugin(api: any) {
   if (!api || typeof api.invokeNativePlugin !== "function") return;
 
@@ -221,7 +223,7 @@ function patchInvokeNativePlugin(api: any) {
           chuckerStore.completeTracking(logId, {
             status,
             responseData: res,
-            error: status !== 0 ? ((res && res.message) || "Native plugin call error") : undefined,
+            error: status !== 0 ? (res && res.message) || "Native plugin call error" : undefined,
           });
         }
         if (typeof callback === "function") callback(res);
@@ -242,9 +244,6 @@ function patchInvokeNativePlugin(api: any) {
   });
 }
 
-// ──────────────────────────────────────────────
-// Page & Component Patching (Template float button)
-// ──────────────────────────────────────────────
 export function patchPageAndComponent(navigateUrl = "/pages/chucker/index") {
   if (typeof Page !== "undefined") {
     const origPage = Page;
@@ -270,7 +269,12 @@ export function patchPageAndComponent(navigateUrl = "/pages/chucker/index") {
             try {
               this.setData({
                 "__chucker.count": chuckerStore.getLogs().length,
-                "__chucker.hasError": chuckerStore.getLogs().some((l) => l.status === "error" || (typeof l.status === "number" && l.status >= 400)),
+                "__chucker.hasError": chuckerStore
+                  .getLogs()
+                  .some(
+                    (l) =>
+                      l.status === "error" || (typeof l.status === "number" && l.status >= 400),
+                  ),
               });
             } catch (e) {}
           });

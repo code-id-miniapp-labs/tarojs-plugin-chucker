@@ -97,9 +97,6 @@ function copyRecursiveSync(src: string, dest: string) {
   }
 }
 
-// ──────────────────────────────────────────────
-// SYNC & INJECT (Development / Enabled)
-// ──────────────────────────────────────────────
 function syncPackage() {
   if (fs.existsSync(TARGET_NPM_DIR)) {
     fs.rmSync(TARGET_NPM_DIR, { recursive: true, force: true });
@@ -208,9 +205,6 @@ function injectComponentIntoPageWxml() {
   }
 }
 
-// ──────────────────────────────────────────────
-// CLEAN / DISABLE (Production / Disabled)
-// ──────────────────────────────────────────────
 function cleanProduction() {
   console.log(`[chucker] 🧹 Auto-cleaning Chucker for production (0 KB UI footprint)...`);
 
@@ -220,7 +214,9 @@ function cleanProduction() {
   }
   fs.mkdirSync(TARGET_NPM_DIR, { recursive: true });
   fs.writeFileSync(path.join(TARGET_NPM_DIR, "index.js"), PROD_NOOP_STUB, "utf-8");
-  console.log(`[chucker] 📄 Replaced miniprogram_npm/miniapp-plugin-chucker with tiny no-op stub (0.1 KB)`);
+  console.log(
+    `[chucker] 📄 Replaced miniprogram_npm/miniapp-plugin-chucker with tiny no-op stub (0.1 KB)`,
+  );
   changedCount++;
 
   // 2. Remove route and usingComponents from app.json
@@ -272,7 +268,9 @@ function cleanProduction() {
       if (content.includes("chucker-float")) {
         const cleaned = content.replace(/\n*<chucker-float\s*\/>\n*/g, "\n").trimEnd() + "\n";
         fs.writeFileSync(file, cleaned, "utf-8");
-        console.log(`[chucker] 🗑️ Stripped <chucker-float /> from ${path.relative(TARGET_ROOT, file)}`);
+        console.log(
+          `[chucker] 🗑️ Stripped <chucker-float /> from ${path.relative(TARGET_ROOT, file)}`,
+        );
         changedCount++;
       }
     }
@@ -281,9 +279,6 @@ function cleanProduction() {
   console.log(`[chucker] 🚀 Production clean complete! All UI stripped, zero error requires.`);
 }
 
-// ──────────────────────────────────────────────
-// Run CLI
-// ──────────────────────────────────────────────
 const isDisabled = detectDisabledState();
 
 console.log("================================================");
