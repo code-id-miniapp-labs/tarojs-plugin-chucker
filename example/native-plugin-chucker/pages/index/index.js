@@ -115,9 +115,12 @@ Page({
   // 6. Native Plugin Call
   onTriggerNativeCall() {
     if (typeof wx.invokeNativePlugin === "function") {
-      wx.invokeNativePlugin("demoNativePlugin", { action: "fetchDeviceInfo", env: "staging" }, (res) => {
-        console.log("Native plugin result:", res);
-      });
+      const nativeOptions = {
+        api_name: "getTselAuth",
+        data: { appId: "asd" },
+      };
+
+      wx.invokeNativePlugin(nativeOptions);
     } else {
       // If invokeNativePlugin doesn't exist in simulator, mock one for demo
       chuckerStore.log({

@@ -6,5 +6,11 @@ export interface ChuckerOptions {
     enabled?: boolean;
     maxLogs?: number;
     navigatePath?: string;
+    /**
+     * Patch `console.log`, `console.warn`, `console.error`, and `console.info`
+     * to capture logs in the Chucker inspector.
+     * @default false
+     */
+    console?: boolean;
 }
 export declare function initChucker(options?: ChuckerOptions): void;

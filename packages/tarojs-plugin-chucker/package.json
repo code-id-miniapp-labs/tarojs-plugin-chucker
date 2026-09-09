@@ -1,6 +1,6 @@
 {
   "name": "tarojs-plugin-chucker",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "TaroJS build plugin for miniapp-chucker — injects the Chucker inspector into TaroJS projects",
   "main": "dist/index.js",
   "module": "dist/index.js",

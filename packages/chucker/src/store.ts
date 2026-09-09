@@ -53,6 +53,8 @@ class ChuckerStore {
   private isInitialized: boolean = false;
   private lastNotifyTime: number = 0;
   private notifyTimeout: any = null;
+  private _notifying: boolean = false;
+  private _pendingNotify: boolean = false;
 
   public init(maxLogs = 100) {
     this.maxLogs = maxLogs;
@@ -185,18 +187,35 @@ class ChuckerStore {
   }
 
   private executeNotify() {
+    if (this._notifying) {
+      this._pendingNotify = true;
+      return;
+    }
+
+    this._notifying = true;
     this.lastNotifyTime = Date.now();
     if (this.notifyTimeout) {
       clearTimeout(this.notifyTimeout);
       this.notifyTimeout = null;
     }
-    this.listeners.forEach((listener) => {
-      try {
-        listener(this.logs);
-      } catch (e) {
-        console.error("Chucker store notify error:", e);
-      }
-    });
+
+    try {
+      this.listeners.forEach((listener) => {
+        try {
+          listener(this.logs);
+        } catch (_e) {
+          // Silently swallow to avoid triggering patched console.error
+        }
+      });
+    } finally {
+      this._notifying = false;
+    }
+
+    // Flush any logs that arrived while we were notifying
+    if (this._pendingNotify) {
+      this._pendingNotify = false;
+      this.executeNotify();
+    }
   }
 
   private notify() {

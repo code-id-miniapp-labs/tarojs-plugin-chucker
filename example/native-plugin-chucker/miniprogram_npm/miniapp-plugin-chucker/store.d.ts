@@ -49,6 +49,8 @@ declare class ChuckerStore {
     private isInitialized;
     private lastNotifyTime;
     private notifyTimeout;
+    private _notifying;
+    private _pendingNotify;
     init(maxLogs?: number): void;
     handleRequestStart(log: ChuckerLog): void;
     handleRequestComplete(payload: Partial<ChuckerLog> & {

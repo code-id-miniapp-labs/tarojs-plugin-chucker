@@ -209,36 +209,167 @@ function patchInvokeNativePlugin(api: any) {
   if (!api || typeof api.invokeNativePlugin !== "function") return;
 
   safePatchMethod(api, "invokeNativePlugin", (original) => {
-    return function (this: any, name: string, params: any, callback?: Function) {
-      const logId = chuckerStore.startTracking({
+    return function (this: any, name: any, args: any, ...rest: any[]) {
+      const id = "nat_" + Math.random().toString(36).substring(2, 9);
+      const startTime = Date.now();
+
+      let actualName = "NATIVE_CALL";
+      let actualArgs = args;
+      let finalArgs = args;
+
+      if (typeof name === "string") {
+        actualName = name;
+        if (args && typeof args === "object") {
+          finalArgs = { ...args };
+          const originalSuccess = args.success;
+          const originalFail = args.fail;
+
+          finalArgs.success = function (res: any) {
+            if (markCompleted(id)) {
+              const duration = Date.now() - startTime;
+              chuckerStore.handleRequestComplete({
+                id,
+                status: "success",
+                responseData: res,
+                duration,
+              });
+            }
+            if (originalSuccess) return originalSuccess.apply(this, arguments as any);
+          };
+
+          finalArgs.fail = function (err: any) {
+            if (markCompleted(id)) {
+              const duration = Date.now() - startTime;
+              chuckerStore.handleRequestComplete({
+                id,
+                status: "fail",
+                error: err
+                  ? typeof err === "object"
+                    ? JSON.stringify(err)
+                    : String(err)
+                  : "Native call failed",
+                duration,
+              });
+            }
+            if (originalFail) return originalFail.apply(this, arguments as any);
+          };
+        }
+      } else if (name && typeof name === "object") {
+        actualName = name.api_name || "NATIVE_CALL";
+        actualArgs = name.data || name;
+
+        const clonedObj = { ...name };
+        const originalSuccess = name.success;
+        const originalFail = name.fail;
+
+        clonedObj.success = function (res: any) {
+          if (markCompleted(id)) {
+            const duration = Date.now() - startTime;
+            chuckerStore.handleRequestComplete({
+              id,
+              status: "success",
+              responseData: res,
+              duration,
+            });
+          }
+          if (originalSuccess) return originalSuccess.apply(this, arguments as any);
+        };
+
+        clonedObj.fail = function (err: any) {
+          if (markCompleted(id)) {
+            const duration = Date.now() - startTime;
+            chuckerStore.handleRequestComplete({
+              id,
+              status: "fail",
+              error: err
+                ? typeof err === "object"
+                  ? JSON.stringify(err)
+                  : String(err)
+                : "Native call failed",
+              duration,
+            });
+          }
+          if (originalFail) return originalFail.apply(this, arguments as any);
+        };
+
+        name = clonedObj;
+      }
+
+      chuckerStore.handleRequestStart({
+        id,
         type: "native",
         method: "NATIVE",
-        url: name,
-        requestData: params,
+        url: actualName,
+        requestData: actualArgs,
+        startTime,
       });
 
-      const wrappedCb = (res: any) => {
-        if (markCompleted(logId)) {
-          const status = res && res.code !== undefined ? res.code : 0;
-          chuckerStore.completeTracking(logId, {
-            status,
-            responseData: res,
-            error: status !== 0 ? (res && res.message) || "Native plugin call error" : undefined,
-          });
-        }
-        if (typeof callback === "function") callback(res);
-      };
+      // Hook callback function if passed directly as argument
+      const lastArg = rest[rest.length - 1];
+      if (typeof lastArg === "function") {
+        rest[rest.length - 1] = function (res: any) {
+          if (markCompleted(id)) {
+            const duration = Date.now() - startTime;
+            chuckerStore.handleRequestComplete({
+              id,
+              status:
+                res && (res.errCode === 0 || res.errorCode === 0 || !res.errCode)
+                  ? "success"
+                  : "fail",
+              responseData: res,
+              duration,
+            });
+          }
+          return lastArg.apply(this, arguments as any);
+        };
+      }
 
       try {
-        return original.call(this, name, params, wrappedCb);
-      } catch (err: any) {
-        if (markCompleted(logId)) {
-          chuckerStore.completeTracking(logId, {
-            status: "error",
-            error: err && err.message ? err.message : String(err),
+        const result = original.apply(this, [name, finalArgs, ...rest]);
+        if (result && typeof result.then === "function") {
+          return result.then(
+            (res: any) => {
+              if (markCompleted(id)) {
+                const duration = Date.now() - startTime;
+                chuckerStore.handleRequestComplete({
+                  id,
+                  status: "success",
+                  responseData: res,
+                  duration,
+                });
+              }
+              return res;
+            },
+            (err: any) => {
+              if (markCompleted(id)) {
+                const duration = Date.now() - startTime;
+                chuckerStore.handleRequestComplete({
+                  id,
+                  status: "fail",
+                  error: err
+                    ? typeof err === "object"
+                      ? JSON.stringify(err)
+                      : String(err)
+                    : "Native call failed",
+                  duration,
+                });
+              }
+              throw err;
+            },
+          );
+        }
+        return result;
+      } catch (error: any) {
+        if (markCompleted(id)) {
+          const duration = Date.now() - startTime;
+          chuckerStore.handleRequestComplete({
+            id,
+            status: "fail",
+            error: error ? error.message || String(error) : "Synchronous native error",
+            duration,
           });
         }
-        throw err;
+        throw error;
       }
     };
   });
@@ -295,7 +426,91 @@ export function patchPageAndComponent(navigateUrl = "/pages/chucker/index") {
   }
 }
 
-export function initInterceptors() {
+function safeSerialize(args: any[]): any {
+  if (args.length === 0) return undefined;
+
+  const serialize = (val: any, depth = 0): any => {
+    if (depth > 3) return "[max depth]";
+    if (val === null || val === undefined) return val;
+
+    const t = typeof val;
+    if (t === "string" || t === "number" || t === "boolean") return val;
+    if (t === "function") return `[Function: ${val.name || "anonymous"}]`;
+    if (t === "symbol") return val.toString();
+
+    if (val instanceof Error) {
+      return { name: val.name, message: val.message, stack: val.stack };
+    }
+
+    if (Array.isArray(val)) {
+      return val.map((v) => serialize(v, depth + 1));
+    }
+
+    if (t === "object") {
+      try {
+        // Fast-path: if JSON.stringify works, use it
+        JSON.stringify(val);
+        return val;
+      } catch (_e) {
+        // Circular or non-serializable — walk manually
+        const out: Record<string, any> = {};
+        for (const key of Object.keys(val).slice(0, 50)) {
+          try {
+            out[key] = serialize(val[key], depth + 1);
+          } catch (_e) {
+            out[key] = "[unserializable]";
+          }
+        }
+        return out;
+      }
+    }
+
+    return String(val);
+  };
+
+  const serialized = args.map((a) => serialize(a));
+  return serialized.length === 1 ? serialized[0] : serialized;
+}
+
+const CONSOLE_LEVELS = ["log", "warn", "error", "info"] as const;
+type ConsoleLevel = (typeof CONSOLE_LEVELS)[number];
+
+function consoleLevelToStatus(level: ConsoleLevel): string {
+  switch (level) {
+    case "error":
+      return "error";
+    case "warn":
+      return "warning";
+    default:
+      return "success";
+  }
+}
+
+function patchConsole() {
+  for (const level of CONSOLE_LEVELS) {
+    safePatchMethod(console, level, (original) => {
+      return function (this: any, ...args: any[]) {
+        // Call original first so DevTools output is preserved
+        original.apply(this, args);
+
+        chuckerStore.log({
+          type: "console",
+          method: level.toUpperCase(),
+          url: `console.${level}`,
+          requestData: safeSerialize(args),
+          status: consoleLevelToStatus(level),
+        });
+      };
+    });
+  }
+}
+
+export interface InterceptorOptions {
+  /** Patch console.log / warn / error / info to capture logs. @default false */
+  console?: boolean;
+}
+
+export function initInterceptors(options?: InterceptorOptions) {
   const api = getGlobalApi();
   if (!api) return;
 
@@ -303,4 +518,8 @@ export function initInterceptors() {
   patchNetworkMethod(api, "uploadFile", "upload");
   patchNetworkMethod(api, "downloadFile", "download");
   patchInvokeNativePlugin(api);
+
+  if (options?.console) {
+    patchConsole();
+  }
 }

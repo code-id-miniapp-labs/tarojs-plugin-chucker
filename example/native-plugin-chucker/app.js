@@ -4,6 +4,7 @@ const { initChucker } = require("miniapp-plugin-chucker");
 initChucker({
   enabled: true,
   maxLogs: 100,
+  console: true,
 });
 
 App({

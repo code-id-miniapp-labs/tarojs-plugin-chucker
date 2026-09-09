@@ -21,6 +21,12 @@ export interface ChuckerOptions {
    * @default "/pages/chucker/index"
    */
   navigatePath?: string;
+  /**
+   * Patch `console.log`, `console.warn`, `console.error`, and `console.info`
+   * to capture logs in the Chucker inspector.
+   * @default false
+   */
+  console?: boolean;
 }
 
 /**
@@ -48,7 +54,7 @@ export function initChucker(options?: ChuckerOptions) {
   }
 
   chuckerStore.init(options?.maxLogs ?? 100);
-  initInterceptors();
+  initInterceptors({ console: options?.console });
   patchPageAndComponent(options?.navigatePath ?? "/pages/chucker/index");
 
   console.log("[miniapp-chucker] Initialized.");
