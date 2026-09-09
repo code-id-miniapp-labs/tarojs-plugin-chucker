@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "Chucker",
+  "navigationBarBackgroundColor": "#121212",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#121212",
+  "enablePullDownRefresh": false
+}

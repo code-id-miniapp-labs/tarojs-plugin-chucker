@@ -1,0 +1,43 @@
+{
+  "name": "miniapp-plugin-chucker",
+  "version": "1.0.0",
+  "description": "Native Mini Program (WeApp / TCMPP / Alipay / ByteDance) UI assets, inspector page and runtime for Chucker",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "miniprogram": "dist",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "bin": {
+    "miniapp-plugin-chucker": "./dist/cli/index.js",
+    "chucker": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "prebuild": "cp ../chucker/src/store.ts ../chucker/src/interceptor.ts ../chucker/src/utils.ts src/",
+    "build": "tsc",
+    "postbuild": "cp -r src/components dist/ && cp -r src/pages dist/ && node ../../scripts/minify.js dist",
+    "watch": "tsc -w",
+    "prepare": "pnpm run build"
+  },
+  "keywords": [
+    "miniapp",
+    "chucker",
+    "debug",
+    "network",
+    "weapp",
+    "tcmpp"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "miniapp-chucker": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,106 @@
+/** app.wxss **/
+page {
+  background-color: #f7f8fa;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  color: #333333;
+}
+
+.container {
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.hero {
+  background: linear-gradient(135deg, #1e1e2f 0%, #2a2b45 100%);
+  border-radius: 20rpx;
+  padding: 40rpx 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.12);
+  margin-bottom: 10rpx;
+}
+
+.hero-title {
+  display: block;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #c9b99a;
+  margin-bottom: 8rpx;
+}
+
+.hero-subtitle {
+  display: block;
+  font-size: 24rpx;
+  color: #8b8fa8;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.card-action {
+  margin-top: 10rpx;
+}
+
+.section-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #666666;
+  margin-bottom: 8rpx;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn {
+  width: 100% !important;
+  font-size: 28rpx !important;
+  font-weight: 500 !important;
+  border-radius: 12rpx !important;
+  padding: 20rpx 0 !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+}
+
+.btn-primary {
+  background-color: #007aff !important;
+  color: #ffffff !important;
+}
+
+.btn-secondary {
+  background-color: #5856d6 !important;
+  color: #ffffff !important;
+}
+
+.btn-danger {
+  background-color: #ff3b30 !important;
+  color: #ffffff !important;
+}
+
+.btn-info {
+  background-color: #34c759 !important;
+  color: #ffffff !important;
+}
+
+.btn-warning {
+  background-color: #ff9500 !important;
+  color: #ffffff !important;
+}
+
+.btn-default {
+  background-color: #f2f2f7 !important;
+  color: #333333 !important;
+  border: 1rpx solid #e5e5ea !important;
+}
+
+.btn-success {
+  background-color: #1e1e2f !important;
+  color: #c9b99a !important;
+  border: 1rpx solid rgba(201, 185, 154, 0.4) !important;
+  font-weight: 700 !important;
+}

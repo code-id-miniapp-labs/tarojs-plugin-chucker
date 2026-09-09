@@ -1,0 +1,25 @@
+{
+	"miniprogramRoot": "dist/",
+	"projectname": "example-taro-chucker",
+	"description": "Taro Chucker Example",
+	"appid": "touristappid",
+	"setting": {
+		"urlCheck": false,
+		"es6": false,
+		"enhance": false,
+		"compileHotReLoad": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true,
+		"nodeModules": true,
+		"autoAudits": false,
+		"uploadWithSourceMap": true,
+		"uglifyFileName": true,
+		"remoteDebugLogEnable": true,
+		"prefetch": false
+	},
+	"compileType": "miniprogram",
+	"TCSASappid": "touristId",
+	"scripts": {},
+	"condition": {}
+}

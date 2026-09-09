@@ -1,0 +1,33 @@
+<!-- Native WeApp / TCMPP Demo Page -->
+<view class="container">
+  <view class="hero">
+    <text class="hero-title">Native Mini Program</text>
+    <text class="hero-subtitle">Demo with miniapp-plugin-chucker</text>
+  </view>
+
+  <view class="card">
+    <text class="section-title">Network Requests</text>
+    <button class="btn btn-primary" bindtap="onTriggerGet">Trigger HTTP GET</button>
+    <button class="btn btn-secondary" bindtap="onTriggerPost">Trigger HTTP POST</button>
+    <button class="btn btn-danger" bindtap="onTrigger404">Trigger 404 Error</button>
+  </view>
+
+  <view class="card">
+    <text class="section-title">File Operations</text>
+    <button class="btn btn-info" bindtap="onTriggerUpload">Trigger File Upload</button>
+    <button class="btn btn-info" bindtap="onTriggerDownload">Trigger File Download</button>
+  </view>
+
+  <view class="card">
+    <text class="section-title">Native Plugins & Custom Logs</text>
+    <button class="btn btn-warning" bindtap="onTriggerNativeCall">Trigger Native Plugin Call</button>
+    <button class="btn btn-default" bindtap="onTriggerCustomLog">Record Custom Log</button>
+  </view>
+
+  <view class="card card-action">
+    <button class="btn btn-secondary" bindtap="onGoToProfile">Go to Profile Page</button>
+    <button class="btn btn-success" bindtap="onOpenChucker">Open Chucker Inspector</button>
+  </view>
+</view>
+
+<chucker-float />

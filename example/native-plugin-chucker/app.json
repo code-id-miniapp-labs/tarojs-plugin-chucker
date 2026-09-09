@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/profile/index",
+    "miniprogram_npm/miniapp-plugin-chucker/pages/chucker/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTitleText": "Native Chucker Demo",
+    "navigationBarTextStyle": "black"
+  },
+  "usingComponents": {
+    "chucker-float": "miniapp-plugin-chucker/components/chucker-float/index"
+  }
+}

@@ -1,0 +1,23 @@
+{
+	"projectname": "native-plugin-chucker",
+	"description": "Native Mini Program example for miniapp-plugin-chucker",
+	"appid": "touristappid",
+	"setting": {
+		"urlCheck": false,
+		"es6": true,
+		"postcss": true,
+		"minified": false,
+		"newFeature": true,
+		"nodeModules": true,
+		"autoAudits": false,
+		"uploadWithSourceMap": true,
+		"uglifyFileName": true,
+		"remoteDebugLogEnable": true,
+		"prefetch": false
+	},
+	"compileType": "miniprogram",
+	"libVersion": "3.0.0",
+	"TCSASappid": "touristId",
+	"scripts": {},
+	"condition": {}
+}

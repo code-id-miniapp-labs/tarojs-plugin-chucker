@@ -1,0 +1,38 @@
+{
+  "name": "miniapp-chucker",
+  "version": "1.0.0",
+  "description": "Headless framework-agnostic network debugger core for WeApp / TCMPP / Alipay / TaroJS miniapps",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./runtime": "./dist/index.js",
+    "./utils": "./dist/utils.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "node ../../scripts/minify.js dist",
+    "watch": "tsc -w",
+    "prepare": "pnpm run build"
+  },
+  "keywords": [
+    "miniapp",
+    "chucker",
+    "debug",
+    "network",
+    "interceptor",
+    "weapp",
+    "tcmpp",
+    "taro"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+<view class="container">
+  <view class="hero">
+    <text class="hero-title">Profile Page</text>
+    <text class="hero-subtitle">User settings and profile requests</text>
+  </view>
+
+  <view class="card">
+    <text class="section-title">Profile Actions</text>
+    <button class="btn btn-primary" bindtap="onFetchProfile">Fetch User Profile</button>
+    <button class="btn btn-secondary" bindtap="onUpdateAvatar">Simulate Avatar Upload</button>
+  </view>
+</view>
+
+<chucker-float />

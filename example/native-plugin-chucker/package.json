@@ -1,0 +1,12 @@
+{
+  "name": "example-native-plugin-chucker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Native Mini Program example for miniapp-plugin-chucker",
+  "scripts": {
+    "sync": "miniapp-plugin-chucker"
+  },
+  "dependencies": {
+    "miniapp-plugin-chucker": "workspace:*"
+  }
+}

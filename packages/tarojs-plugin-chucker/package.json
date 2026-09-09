@@ -1,0 +1,47 @@
+{
+  "name": "tarojs-plugin-chucker",
+  "version": "2.0.0",
+  "description": "TaroJS build plugin for miniapp-chucker — injects the Chucker inspector into TaroJS projects",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./runtime": "./dist/loader.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "cp -r src/components dist/components",
+    "watch": "tsc -w",
+    "prepare": "pnpm run build"
+  },
+  "keywords": [
+    "taro",
+    "plugin",
+    "chucker",
+    "debug",
+    "network",
+    "miniprogram"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "miniapp-chucker": "workspace:*"
+  },
+  "peerDependencies": {
+    "@tarojs/taro": ">=3.0.0"
+  },
+  "devDependencies": {
+    "@tarojs/components": "^4.2.0",
+    "@tarojs/plugin-platform-weapp": "^4.2.0",
+    "@tarojs/service": "^4.2.0",
+    "@tarojs/taro": "^4.2.0",
+    "@types/node": "^18.0.0",
+    "@types/react": "^18.0.0",
+    "react": "^18.0.0",
+    "typescript": "^5.0.0"
+  }
+}

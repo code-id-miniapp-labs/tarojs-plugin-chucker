@@ -1,0 +1,3 @@
+<view class="chucker-float-btn" bindtap="navigate">
+  <text class="chucker-float-label">C</text>
+</view>
