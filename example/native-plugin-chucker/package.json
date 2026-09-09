@@ -8,6 +8,6 @@
     "clean": "miniapp-plugin-chucker clean"
   },
   "dependencies": {
-    "miniapp-plugin-chucker": "workspace:*"
+    "miniapp-plugin-chucker": "^2.0.0"
   }
 }

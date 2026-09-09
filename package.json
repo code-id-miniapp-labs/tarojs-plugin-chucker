@@ -1,15 +1,21 @@
 {
   "private": true,
   "name": "miniapp-chucker-workspace",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "description": "miniapp-chucker monorepo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/code-id-miniapp-labs/tarojs-plugin-chucker.git"
+  },
   "scripts": {
     "build": "pnpm -r --filter './packages/*' run build",
     "test": "pnpm -r --filter './packages/*' run test --passWithNoTests",
     "lint": "oxlint packages",
     "dev:weapp": "pnpm --filter example run dev:weapp",
     "sync:native": "pnpm --filter example-native-plugin-chucker run sync",
-    "clean:native": "pnpm --filter example-native-plugin-chucker run clean"
+    "clean:native": "pnpm --filter example-native-plugin-chucker run clean",
+    "publish:packages": "pnpm -r --filter './packages/*' publish --access public --no-git-checks",
+    "release": "bumpp package.json packages/*/package.json --commit \"release: v%s\" --tag --push"
   },
   "devDependencies": {
     "bumpp": "^12.3.0",

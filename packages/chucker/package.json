@@ -1,10 +1,18 @@
 {
   "name": "miniapp-chucker",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Headless framework-agnostic network debugger core for WeApp / TCMPP / Alipay / TaroJS miniapps",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/code-id-miniapp-labs/tarojs-plugin-chucker.git",
+    "directory": "packages/chucker"
+  },
   "files": [
     "dist"
   ],

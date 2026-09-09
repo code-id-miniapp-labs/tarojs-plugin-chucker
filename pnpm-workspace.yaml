@@ -9,3 +9,7 @@ allowBuilds:
   core-js: true
   core-js-pure: true
   esbuild: true
+minimumReleaseAgeExclude:
+  - miniapp-chucker@2.0.0
+  - miniapp-plugin-chucker@2.0.0
+  - tarojs-plugin-chucker@2.0.0

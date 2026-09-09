@@ -24,8 +24,8 @@ importers:
   example/native-plugin-chucker:
     dependencies:
       miniapp-plugin-chucker:
-        specifier: workspace:*
-        version: link:../../packages/miniapp-plugin-chucker
+        specifier: ^2.0.0
+        version: 2.0.0
 
   example/taro-app:
     dependencies:
@@ -78,8 +78,8 @@ importers:
         specifier: ^18.0.0
         version: 18.3.1(react@18.3.1)
       tarojs-plugin-chucker:
-        specifier: workspace:*
-        version: link:../../packages/tarojs-plugin-chucker
+        specifier: ^2.0.0
+        version: 2.0.0(@tarojs/taro@4.2.0(6933b7ec17ed5a078f68aaa1ed43affd))
     devDependencies:
       '@babel/core':
         specifier: ^7.24.4
@@ -199,7 +199,7 @@ importers:
     devDependencies:
       '@tarojs/components':
         specifier: ^4.2.0
-        version: 4.2.0(@tarojs/helper@4.2.0(supports-color@8.1.1))(@types/react@18.3.31)(html-webpack-plugin@5.6.7(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(postcss@8.5.16)(rollup@3.30.0)(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
+        version: 4.2.0(@tarojs/helper@4.2.0(supports-color@8.1.1))(@types/react@18.3.31)(html-webpack-plugin@5.6.7(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(postcss@8.5.16)(rollup@3.30.0)(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(supports-color@8.1.1)(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
       '@tarojs/plugin-platform-weapp':
         specifier: ^4.2.0
         version: 4.2.0(@tarojs/service@4.2.0(supports-color@8.1.1))(@tarojs/shared@4.2.0)
@@ -208,7 +208,7 @@ importers:
         version: 4.2.0(supports-color@8.1.1)
       '@tarojs/taro':
         specifier: ^4.2.0
-        version: 4.2.0(92c3964dc1385c32ee0e3cc7bb2015f0)
+        version: 4.2.0(4a52a3ba54503e855b20bdb559734f0f)
       '@types/node':
         specifier: ^18.0.0
         version: 18.19.130
@@ -5188,6 +5188,13 @@ packages:
     peerDependencies:
       webpack: ^5.0.0
 
+  miniapp-chucker@2.0.0:
+    resolution: {integrity: sha512-RNe5uWTtIuRfm90VNZ0t5aNaonrr1AtIIpvaznx2emGZCFJ7PLr8JGOJkdnKf7PpdOxyoONR6QEFSRYRAsIDJw==}
+
+  miniapp-plugin-chucker@2.0.0:
+    resolution: {integrity: sha512-DV7NelbW12WqQvs2VX20MbjgkOX+17sA7pVOcsrHuZvzTuTDxHn+lEK5PvO2gUSqTso8IUlggCcjml/+RwFdag==}
+    hasBin: true
+
   minimalistic-assert@1.0.1:
     resolution: {integrity: sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==}
 
@@ -6622,6 +6629,11 @@ packages:
   tar-stream@1.6.2:
     resolution: {integrity: sha512-rzS0heiNf8Xn7/mpdSVVSMAWAoy9bfb1WOTYC78Z0UQKeKa/CWS8FOq0lKGNa8DWKAn9gxjCvMLYc5PGXYlK2A==}
     engines: {node: '>= 0.8.0'}
+
+  tarojs-plugin-chucker@2.0.0:
+    resolution: {integrity: sha512-x7mYbPB6pDjcKI0XmSpyjnJVeJh38ZkHNaunl3sMowxPXq39VvmjwaB8o/wqD3Rbqm4z65FJi62Zui6/09JtMw==}
+    peerDependencies:
+      '@tarojs/taro': '>=3.0.0'
 
   terser-webpack-plugin@5.6.1:
     resolution: {integrity: sha512-201R5j+sJpK8nFWwKVyNfZot8FaJbLZDq5evriVzbV1wDtSXDjRUDRfJzHpAaxFDMEhsZL1QkeqM61wgsS3KaQ==}
@@ -8907,12 +8919,12 @@ snapshots:
       - debug
       - supports-color
 
-  '@tarojs/components@4.2.0(@tarojs/helper@4.2.0(supports-color@8.1.1))(@types/react@18.3.31)(html-webpack-plugin@5.6.7(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(postcss@8.5.16)(rollup@3.30.0)(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))':
+  '@tarojs/components@4.2.0(@tarojs/helper@4.2.0(supports-color@8.1.1))(@types/react@18.3.31)(html-webpack-plugin@5.6.7(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(postcss@8.5.16)(rollup@3.30.0)(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(supports-color@8.1.1)(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))':
     dependencies:
       '@stencil/core': 2.22.3
       '@tarojs/runtime': 4.2.0
       '@tarojs/shared': 4.2.0
-      '@tarojs/taro': 4.2.0(92c3964dc1385c32ee0e3cc7bb2015f0)
+      '@tarojs/taro': 4.2.0(4a52a3ba54503e855b20bdb559734f0f)
       classnames: 2.5.1
       hammerjs: 2.0.8
       hls.js: 1.6.16
@@ -9137,6 +9149,23 @@ snapshots:
       - '@swc/helpers'
       - supports-color
 
+  '@tarojs/taro@4.2.0(4a52a3ba54503e855b20bdb559734f0f)':
+    dependencies:
+      '@tarojs/api': 4.2.0(@tarojs/runtime@4.2.0)(@tarojs/shared@4.2.0)
+      '@tarojs/components': 4.2.0(@tarojs/helper@4.2.0(supports-color@8.1.1))(@types/react@18.3.31)(html-webpack-plugin@5.6.7(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(postcss@8.5.16)(rollup@3.30.0)(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(supports-color@8.1.1)(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
+      '@tarojs/helper': 4.2.0(supports-color@8.1.1)
+      '@tarojs/runtime': 4.2.0
+      '@tarojs/shared': 4.2.0
+      '@types/postcss-url': 10.0.4
+      postcss: 8.5.16
+    optionalDependencies:
+      '@types/react': 18.3.31
+      html-webpack-plugin: 5.6.7(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
+      rollup: 3.30.0
+      webpack: 5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)
+      webpack-chain: 6.5.1
+      webpack-dev-server: 4.15.2(supports-color@8.1.1)(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
+
   '@tarojs/taro@4.2.0(6933b7ec17ed5a078f68aaa1ed43affd)':
     dependencies:
       '@tarojs/api': 4.2.0(@tarojs/runtime@4.2.0)(@tarojs/shared@4.2.0)
@@ -9153,23 +9182,6 @@ snapshots:
       webpack: 5.91.0(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.21.5)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)
       webpack-chain: 6.5.1
       webpack-dev-server: 4.15.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webpack@5.91.0(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.21.5)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
-
-  '@tarojs/taro@4.2.0(92c3964dc1385c32ee0e3cc7bb2015f0)':
-    dependencies:
-      '@tarojs/api': 4.2.0(@tarojs/runtime@4.2.0)(@tarojs/shared@4.2.0)
-      '@tarojs/components': 4.2.0(@tarojs/helper@4.2.0(supports-color@8.1.1))(@types/react@18.3.31)(html-webpack-plugin@5.6.7(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(postcss@8.5.16)(rollup@3.30.0)(webpack-chain@6.5.1)(webpack-dev-server@4.15.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)))(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
-      '@tarojs/helper': 4.2.0(supports-color@8.1.1)
-      '@tarojs/runtime': 4.2.0
-      '@tarojs/shared': 4.2.0
-      '@types/postcss-url': 10.0.4
-      postcss: 8.5.16
-    optionalDependencies:
-      '@types/react': 18.3.31
-      html-webpack-plugin: 5.6.7(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
-      rollup: 3.30.0
-      webpack: 5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)
-      webpack-chain: 6.5.1
-      webpack-dev-server: 4.15.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
 
   '@tarojs/webpack5-prebundle@4.2.0(supports-color@8.1.1)(webpack@5.91.0(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.21.5)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))':
     dependencies:
@@ -12577,6 +12589,12 @@ snapshots:
       tapable: 2.3.3
       webpack: 5.91.0(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.21.5)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)
 
+  miniapp-chucker@2.0.0: {}
+
+  miniapp-plugin-chucker@2.0.0:
+    dependencies:
+      miniapp-chucker: 2.0.0
+
   minimalistic-assert@1.0.1: {}
 
   minimatch@10.2.6:
@@ -14111,6 +14129,11 @@ snapshots:
       to-buffer: 1.2.2
       xtend: 4.0.2
 
+  tarojs-plugin-chucker@2.0.0(@tarojs/taro@4.2.0(6933b7ec17ed5a078f68aaa1ed43affd)):
+    dependencies:
+      '@tarojs/taro': 4.2.0(6933b7ec17ed5a078f68aaa1ed43affd)
+      miniapp-chucker: 2.0.0
+
   terser-webpack-plugin@5.6.1(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.21.5)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)(webpack@5.91.0(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.21.5)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
@@ -14427,47 +14450,6 @@ snapshots:
       schema-utils: 4.3.3
       webpack: 5.91.0(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.21.5)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)
 
-  webpack-dev-server@4.15.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)):
-    dependencies:
-      '@types/bonjour': 3.5.13
-      '@types/connect-history-api-fallback': 1.5.4
-      '@types/express': 4.17.25
-      '@types/serve-index': 1.9.4
-      '@types/serve-static': 1.15.10
-      '@types/sockjs': 0.3.36
-      '@types/ws': 8.18.1
-      ansi-html-community: 0.0.8
-      bonjour-service: 1.4.2
-      chokidar: 3.6.0
-      colorette: 2.0.20
-      compression: 1.8.1(supports-color@8.1.1)
-      connect-history-api-fallback: 2.0.0
-      default-gateway: 6.0.3
-      express: 4.22.2(supports-color@8.1.1)
-      graceful-fs: 4.2.11
-      html-entities: 2.6.0
-      http-proxy-middleware: 2.0.10(@types/express@4.17.25)(debug@4.4.3(supports-color@8.1.1))
-      ipaddr.js: 2.4.0
-      launch-editor: 2.14.1
-      open: 8.4.2
-      p-retry: 4.6.2
-      rimraf: 3.0.2
-      schema-utils: 4.3.3
-      selfsigned: 2.4.1
-      serve-index: 1.9.2(supports-color@8.1.1)
-      sockjs: 0.3.24
-      spdy: 4.0.2(supports-color@8.1.1)
-      webpack-dev-middleware: 5.3.4(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
-      ws: 8.21.0
-    optionalDependencies:
-      webpack: 5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - supports-color
-      - utf-8-validate
-    optional: true
-
   webpack-dev-server@4.15.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(webpack@5.91.0(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.21.5)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)):
     dependencies:
       '@types/bonjour': 3.5.13
@@ -14507,6 +14489,47 @@ snapshots:
       - debug
       - supports-color
       - utf-8-validate
+
+  webpack-dev-server@4.15.2(supports-color@8.1.1)(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)):
+    dependencies:
+      '@types/bonjour': 3.5.13
+      '@types/connect-history-api-fallback': 1.5.4
+      '@types/express': 4.17.25
+      '@types/serve-index': 1.9.4
+      '@types/serve-static': 1.15.10
+      '@types/sockjs': 0.3.36
+      '@types/ws': 8.18.1
+      ansi-html-community: 0.0.8
+      bonjour-service: 1.4.2
+      chokidar: 3.6.0
+      colorette: 2.0.20
+      compression: 1.8.1(supports-color@8.1.1)
+      connect-history-api-fallback: 2.0.0
+      default-gateway: 6.0.3
+      express: 4.22.2(supports-color@8.1.1)
+      graceful-fs: 4.2.11
+      html-entities: 2.6.0
+      http-proxy-middleware: 2.0.10(@types/express@4.17.25)(debug@4.4.3(supports-color@8.1.1))
+      ipaddr.js: 2.4.0
+      launch-editor: 2.14.1
+      open: 8.4.2
+      p-retry: 4.6.2
+      rimraf: 3.0.2
+      schema-utils: 4.3.3
+      selfsigned: 2.4.1
+      serve-index: 1.9.2(supports-color@8.1.1)
+      sockjs: 0.3.24
+      spdy: 4.0.2(supports-color@8.1.1)
+      webpack-dev-middleware: 5.3.4(webpack@5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3))
+      ws: 8.21.0
+    optionalDependencies:
+      webpack: 5.108.4(@swc/core@1.3.96)(clean-css@5.3.3)(cssnano@6.1.2(postcss@8.5.16))(csso@5.0.5)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.32.0)(postcss@8.5.16)(uglify-js@3.19.3)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - supports-color
+      - utf-8-validate
+    optional: true
 
   webpack-format-messages@3.0.1:
     dependencies:
