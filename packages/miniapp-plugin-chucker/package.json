@@ -1,28 +1,37 @@
 {
   "name": "miniapp-plugin-chucker",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Native Mini Program (WeApp / TCMPP / Alipay / ByteDance) UI assets, inspector page and runtime for Chucker",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "miniprogram": "dist",
-  "publishConfig": {
-    "access": "public"
-  },
+  "keywords": [
+    "chucker",
+    "debug",
+    "miniapp",
+    "network",
+    "tcmpp",
+    "weapp"
+  ],
+  "license": "ISC",
+  "author": "",
   "repository": {
     "type": "git",
     "url": "https://github.com/code-id-miniapp-labs/tarojs-plugin-chucker.git",
     "directory": "packages/miniapp-plugin-chucker"
   },
+  "bin": {
+    "chucker": "./dist/cli/index.js",
+    "miniapp-plugin-chucker": "./dist/cli/index.js"
+  },
   "files": [
     "dist"
   ],
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js"
   },
-  "bin": {
-    "miniapp-plugin-chucker": "./dist/cli/index.js",
-    "chucker": "./dist/cli/index.js"
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "prebuild": "node ../../scripts/copy.js ../chucker/src/store.ts src/store.ts ../chucker/src/interceptor.ts src/interceptor.ts ../chucker/src/utils.ts src/utils.ts",
@@ -31,21 +40,12 @@
     "watch": "tsc -w",
     "prepare": "pnpm run build"
   },
-  "keywords": [
-    "miniapp",
-    "chucker",
-    "debug",
-    "network",
-    "weapp",
-    "tcmpp"
-  ],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "miniapp-chucker": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
     "typescript": "^5.0.0"
-  }
+  },
+  "miniprogram": "dist"
 }

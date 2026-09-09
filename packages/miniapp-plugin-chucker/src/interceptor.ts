@@ -472,7 +472,7 @@ function safeSerialize(args: any[]): any {
   return serialized.length === 1 ? serialized[0] : serialized;
 }
 
-const CONSOLE_LEVELS = ["log", "warn", "error", "info"] as const;
+const CONSOLE_LEVELS = ["log", "warn", "error"] as const;
 type ConsoleLevel = (typeof CONSOLE_LEVELS)[number];
 
 function consoleLevelToStatus(level: ConsoleLevel): string {

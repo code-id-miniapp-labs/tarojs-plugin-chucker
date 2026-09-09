@@ -1,13 +1,17 @@
 {
   "name": "tarojs-plugin-chucker",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "TaroJS build plugin for miniapp-chucker — injects the Chucker inspector into TaroJS projects",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "publishConfig": {
-    "access": "public"
-  },
+  "keywords": [
+    "chucker",
+    "debug",
+    "miniprogram",
+    "network",
+    "plugin",
+    "taro"
+  ],
+  "license": "ISC",
+  "author": "",
   "repository": {
     "type": "git",
     "url": "https://github.com/code-id-miniapp-labs/tarojs-plugin-chucker.git",
@@ -16,9 +20,15 @@
   "files": [
     "dist"
   ],
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
     "./runtime": "./dist/loader.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsc",
@@ -26,21 +36,8 @@
     "watch": "tsc -w",
     "prepare": "pnpm run build"
   },
-  "keywords": [
-    "taro",
-    "plugin",
-    "chucker",
-    "debug",
-    "network",
-    "miniprogram"
-  ],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "miniapp-chucker": "workspace:*"
-  },
-  "peerDependencies": {
-    "@tarojs/taro": ">=3.0.0"
   },
   "devDependencies": {
     "@tarojs/components": "^4.2.0",
@@ -51,5 +48,8 @@
     "@types/react": "^18.0.0",
     "react": "^18.0.0",
     "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@tarojs/taro": ">=3.0.0"
   }
 }

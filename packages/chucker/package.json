@@ -1,13 +1,19 @@
 {
   "name": "miniapp-chucker",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Headless framework-agnostic network debugger core for WeApp / TCMPP / Alipay / TaroJS miniapps",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "publishConfig": {
-    "access": "public"
-  },
+  "keywords": [
+    "chucker",
+    "debug",
+    "interceptor",
+    "miniapp",
+    "network",
+    "taro",
+    "tcmpp",
+    "weapp"
+  ],
+  "license": "ISC",
+  "author": "",
   "repository": {
     "type": "git",
     "url": "https://github.com/code-id-miniapp-labs/tarojs-plugin-chucker.git",
@@ -16,10 +22,16 @@
   "files": [
     "dist"
   ],
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
     "./runtime": "./dist/index.js",
     "./utils": "./dist/utils.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsc",
@@ -27,18 +39,6 @@
     "watch": "tsc -w",
     "prepare": "pnpm run build"
   },
-  "keywords": [
-    "miniapp",
-    "chucker",
-    "debug",
-    "network",
-    "interceptor",
-    "weapp",
-    "tcmpp",
-    "taro"
-  ],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.0.0",
     "typescript": "^5.0.0"
