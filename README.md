@@ -108,6 +108,48 @@ This strips Chucker routes, components, WXML tags, and replaces the package with
 
 ---
 
+## 📦 Sub-package Mode (default since this patch)
+
+The inspector page (UI, ~24 KB native / React page in Taro) is now registered as a **sub-package**
+instead of a main-package page. Only the runtime (interceptor + store + exporter) and the tiny
+floating button stay in the main package.
+
+| Layout | Main package (chucker) | Sub-package |
+|---|---|---|
+| Before (main-package page) | ~41 KB | 0 |
+| After (sub-package) | ~17 KB | ~24 KB (`chucker/`) |
+
+**Taro**
+
+```js
+plugins: [["tarojs-plugin-chucker", {
+  enabled: process.env.NODE_ENV === "development",
+  subPackage: true,            // default → route "/chucker/index"
+  // subPackage: "debug/chucker" → custom root
+  // subPackage: false           → legacy "pages/chucker/index"
+}]]
+```
+
+**Native** (`npx miniapp-plugin-chucker`)
+
+- Copies the inspector page to `<project>/chucker/` and adds `{ "root": "chucker", "pages": ["index"] }` to `app.json` `subPackages`.
+- `--sub-root <name>` to choose another folder, `--main-package` for the legacy layout.
+- `clean` removes the sub-package entry and the generated folder (only if it was created by chucker).
+
+## 📤 Export all cURL + Native API calls (AI-friendly .txt)
+
+Tap **Export** in the inspector header, or call it from code:
+
+```ts
+const text = chuckerStore.exportText({ maxBodyLength: 20000, includeConsole: false });
+```
+
+Format: header `#KEY: value`, `## INDEX` (one line per call), then `## SECTION: NETWORK (CURL)` and
+`## SECTION: NATIVE API`. Every entry is wrapped in `=== ENTRY n ===` / `=== END ENTRY n ===`, and
+multi-line blocks in `<<<NAME` … `NAME>>>`. See `docs/export-sample.txt`.
+
+---
+
 ## 📊 Custom Event Logging (`chuckerStore`)
 
 Record custom operations (WebSocket, analytics, GraphQL) into the Chucker timeline using `chuckerStore`:

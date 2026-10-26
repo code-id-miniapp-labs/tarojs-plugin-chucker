@@ -8,6 +8,23 @@ export interface ChuckerPluginOptions {
    * Defaults to `process.env.NODE_ENV === "development"` when not specified.
    */
   enabled?: boolean;
+  /**
+   * Register the inspector page as an independent sub-package instead of a
+   * main-package page, so its UI code does not count toward the main package size.
+   * - `true` (default): sub-package root "chucker"  → route "/chucker/index"
+   * - `string`: custom sub-package root             → route "/<root>/index"
+   * - `false`: legacy behaviour, main-package page  → route "/pages/chucker/index"
+   */
+  subPackage?: boolean | string;
+}
+
+function resolveLayout(options: ChuckerPluginOptions) {
+  const sp = options.subPackage === undefined ? true : options.subPackage;
+  if (sp === false) {
+    return { isSub: false, root: "", pagePath: "pages/chucker/index" };
+  }
+  const root = typeof sp === "string" && sp.trim() ? sp.trim().replace(/^\/+|\/+$/g, "") : "chucker";
+  return { isSub: true, root, pagePath: `${root}/index` };
 }
 
 function createRawSource(content: string) {
@@ -23,16 +40,36 @@ function createRawSource(content: string) {
 }
 
 export default (ctx: IPluginContext, options: ChuckerPluginOptions = {}) => {
+  const layout = resolveLayout(options);
   ctx.modifyAppConfig(({ appConfig }) => {
     const isDev = process.env.NODE_ENV === "development";
     const enabled = options.enabled !== undefined ? options.enabled : isDev;
     if (!enabled) return;
 
-    if (appConfig && appConfig.pages) {
-      if (!appConfig.pages.includes("pages/chucker/index")) {
-        appConfig.pages.push("pages/chucker/index");
-        console.log('[tarojs-plugin-chucker] Dynamically registered "pages/chucker/index" page');
+    if (!appConfig) return;
+    const cfg: any = appConfig;
+
+    if (!layout.isSub) {
+      if (cfg.pages && !cfg.pages.includes(layout.pagePath)) {
+        cfg.pages.push(layout.pagePath);
+        console.log(`[tarojs-plugin-chucker] Registered main-package page "${layout.pagePath}"`);
       }
+      return;
+    }
+
+    // Sub-package mode: keep inspector UI out of the main package.
+    const key = Array.isArray(cfg.subpackages) && !Array.isArray(cfg.subPackages) ? "subpackages" : "subPackages";
+    if (!Array.isArray(cfg[key])) cfg[key] = [];
+    const exists = cfg[key].some((p: any) => p && p.root === layout.root);
+    if (!exists) {
+      cfg[key].push({ root: layout.root, pages: ["index"] });
+      console.log(
+        `[tarojs-plugin-chucker] Registered sub-package "${layout.root}" (route "/${layout.pagePath}")`,
+      );
+    }
+    // Remove a stale legacy main-package entry if someone added it manually.
+    if (Array.isArray(cfg.pages)) {
+      cfg.pages = cfg.pages.filter((p: string) => p !== "pages/chucker/index");
     }
   });
 
@@ -43,6 +80,7 @@ export default (ctx: IPluginContext, options: ChuckerPluginOptions = {}) => {
     chain.plugin("definePlugin").tap((args: any[]) => {
       if (args && args[0]) {
         args[0]["process.env.CHUCKER_ENABLED"] = JSON.stringify(enabled);
+        args[0]["process.env.CHUCKER_ROUTE"] = JSON.stringify("/" + layout.pagePath);
       }
       return args;
     });
@@ -69,11 +107,11 @@ export default (ctx: IPluginContext, options: ChuckerPluginOptions = {}) => {
         ctx.paths.nodeModulesPath || path.resolve(ctx.paths.appPath, "node_modules");
 
       // Setup Webpack aliases to virtualize pages/chucker/index page resolution
-      const userPagePathWin = path.join(ctx.paths.sourcePath, "pages", "chucker", "index");
+      const userPagePathWin = path.join(ctx.paths.sourcePath, ...layout.pagePath.split("/"));
       const userPagePathUnix = userPagePathWin.replace(/\\/g, "/");
 
       chain.resolve.alias
-        .set("pages/chucker/index", templatePath)
+        .set(layout.pagePath, templatePath)
         .set(userPagePathWin, templatePath)
         .set(userPagePathWin + ".tsx", templatePath)
         .set(userPagePathWin + ".ts", templatePath)
@@ -148,8 +186,8 @@ export default (ctx: IPluginContext, options: ChuckerPluginOptions = {}) => {
     });
 
     Object.keys(assets).forEach((filename) => {
-      // 2. Patch pages/chucker/index.json with nav bar config
-      if (filename === "pages/chucker/index.json") {
+      // 2. Patch the inspector page JSON with nav bar config
+      if (filename === `${layout.pagePath}.json`) {
         const asset = assets[filename];
         const originalSource = asset.source();
         const content =
@@ -172,6 +210,7 @@ export default (ctx: IPluginContext, options: ChuckerPluginOptions = {}) => {
       const isPageJson =
         filename.startsWith("pages/") &&
         filename.endsWith(".json") &&
+        !filename.startsWith(`${layout.pagePath}`) &&
         !filename.includes("pages/chucker/");
 
       if (isPageJson) {
@@ -206,7 +245,7 @@ export default (ctx: IPluginContext, options: ChuckerPluginOptions = {}) => {
 
         if (!content.includes("chucker-float")) {
           // Append the component tag at the end of the WXML
-          const newContent = content + "\n<chucker-float />\n";
+          const newContent = content + `\n<chucker-float url="/${layout.pagePath}" />\n`;
           assets[filename] = createRawSource(newContent);
         }
       }

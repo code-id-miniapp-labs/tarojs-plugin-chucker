@@ -1,6 +1,8 @@
 import { chuckerStore } from "./store";
 import { initInterceptors, patchPageAndComponent } from "./interceptor";
 export { generateCurl, formatJson } from "./utils";
+export { buildExportText } from "./export";
+export type { ExportOptions } from "./export";
 export { chuckerStore };
 export type { ChuckerLog, CustomLogInput, TrackingCompleteInput, Listener } from "./store";
 
@@ -26,9 +28,8 @@ export function initChucker(options?: ChuckerOptions) {
 
   chuckerStore.init(options?.maxLogs ?? 100);
   initInterceptors({ console: options?.console });
-  patchPageAndComponent(
-    options?.navigatePath ?? "/miniprogram_npm/miniapp-plugin-chucker/pages/chucker/index",
-  );
+  // Default: inspector lives in the "chucker" sub-package created by the CLI.
+  patchPageAndComponent(options?.navigatePath ?? "/chucker/index");
 
   console.log("[miniapp-chucker] Initialized.");
 }

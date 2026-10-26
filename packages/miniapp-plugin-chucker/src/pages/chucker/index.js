@@ -263,6 +263,46 @@ Page({
     });
   },
 
+  onExport: function () {
+    var self = this;
+    var api = getGlobalApi();
+    var store = getStore();
+    if (!store) return;
+    if (!store.getLogs().length) {
+      if (api) api.showToast({ title: "No logs yet", icon: "none", duration: 1500 });
+      return;
+    }
+    if (!api) return;
+    api.showActionSheet({
+      itemList: ["Api Network", "Native"],
+      success: function (res) {
+        var isApi = res.tapIndex === 0;
+        var picked = store.getLogs().filter(function (l) {
+          if (l.type === "native") return !isApi;
+          return isApi && (!l.type || ["network", "http", "upload", "download"].indexOf(l.type) !== -1);
+        });
+        if (!picked.length) {
+          api.showToast({
+            title: isApi ? "No API logs" : "No native logs",
+            icon: "none",
+            duration: 1500,
+          });
+          return;
+        }
+        var text = picked
+          .slice()
+          .reverse()
+          .map(function (l) {
+            return l.type === "native"
+              ? "NATIVE " + l.url + " " + JSON.stringify(l.requestData || {})
+              : generateCurl(l.url, l.method || "GET", l.requestHeaders, l.requestData);
+          })
+          .join("\n\n");
+        self._copyToClipboard(text, "Export copied!");
+      },
+    });
+  },
+
   onCopyUrl: function () {
     var log = this.data.selectedLog;
     if (log && log.url) this._copyToClipboard(log.url, "URL Copied!");

@@ -13,6 +13,9 @@
         </view>
       </view>
       <view class="header-right">
+        <view class="btn-clear btn-export" bindtap="onExport">
+          <text class="btn-clear-text">Export</text>
+        </view>
         <view class="btn-clear" bindtap="onClear">
           <text class="btn-clear-text">Clear</text>
         </view>

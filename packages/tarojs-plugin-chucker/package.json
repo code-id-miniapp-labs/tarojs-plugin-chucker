@@ -1,7 +1,7 @@
 {
   "name": "tarojs-plugin-chucker",
   "version": "2.1.1",
-  "description": "TaroJS build plugin for miniapp-chucker — injects the Chucker inspector into TaroJS projects",
+  "description": "TaroJS build plugin for miniapp-chucker \u2014 injects the Chucker inspector into TaroJS projects",
   "keywords": [
     "chucker",
     "debug",
@@ -34,7 +34,8 @@
     "build": "tsc",
     "postbuild": "node ../../scripts/copy.js src/components dist/components && node ../../scripts/minify.js dist",
     "watch": "tsc -w",
-    "prepare": "pnpm run build"
+    "prepare": "pnpm run build",
+    "prebuild": "node ../../scripts/copy.js ../chucker/src/export.ts src/runtime/export.ts ../chucker/src/utils.ts src/runtime/utils.ts ../chucker/src/store.ts src/runtime/store.ts"
   },
   "dependencies": {
     "miniapp-chucker": "workspace:*"

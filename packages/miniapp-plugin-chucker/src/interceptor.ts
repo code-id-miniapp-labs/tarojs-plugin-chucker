@@ -375,7 +375,7 @@ function patchInvokeNativePlugin(api: any) {
   });
 }
 
-export function patchPageAndComponent(navigateUrl = "/pages/chucker/index") {
+export function patchPageAndComponent(navigateUrl = "/chucker/index") {
   if (typeof Page !== "undefined") {
     const origPage = Page;
     // @ts-ignore
@@ -389,7 +389,11 @@ export function patchPageAndComponent(navigateUrl = "/pages/chucker/index") {
         if (api && typeof api.navigateTo === "function") {
           api.navigateTo({
             url: navigateUrl,
-            fail: () => api.navigateTo({ url: "/pages/chucker/index" }),
+            fail: () =>
+              api.navigateTo({
+                url: "/chucker/index",
+                fail: () => api.navigateTo({ url: "/pages/chucker/index" }),
+              }),
           });
         }
       };

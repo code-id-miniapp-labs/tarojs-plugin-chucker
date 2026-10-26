@@ -13,7 +13,7 @@ Component({
   properties: {
     url: {
       type: String,
-      value: "/pages/chucker/index",
+      value: "/chucker/index",
     },
   },
   methods: {
@@ -21,7 +21,12 @@ Component({
       var url = (this.data && this.data.url) || (this.properties && this.properties.url) || "/pages/chucker/index";
       var api = getApi();
       if (api && typeof api.navigateTo === "function") {
-        api.navigateTo({ url: url });
+        api.navigateTo({
+          url: url,
+          fail: function () {
+            api.navigateTo({ url: "/pages/chucker/index" });
+          },
+        });
       }
     },
   },

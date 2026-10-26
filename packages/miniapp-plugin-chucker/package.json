@@ -34,7 +34,7 @@
     "access": "public"
   },
   "scripts": {
-    "prebuild": "node ../../scripts/copy.js ../chucker/src/store.ts src/store.ts ../chucker/src/interceptor.ts src/interceptor.ts ../chucker/src/utils.ts src/utils.ts",
+    "prebuild": "node ../../scripts/copy.js ../chucker/src/store.ts src/store.ts ../chucker/src/interceptor.ts src/interceptor.ts ../chucker/src/utils.ts src/utils.ts ../chucker/src/export.ts src/export.ts",
     "build": "tsc",
     "postbuild": "node ../../scripts/copy.js src/components dist/components src/pages dist/pages && node ../../scripts/minify.js dist",
     "watch": "tsc -w",

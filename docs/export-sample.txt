@@ -1,0 +1,73 @@
+#CHUCKER_EXPORT v1
+#GENERATED_AT: 2026-10-23T11:29:05.801Z
+#TOTAL_ENTRIES: 2
+#NETWORK_COUNT: 1
+#NATIVE_COUNT: 1
+#OTHER_COUNT: 0
+#FAIL_COUNT: 1
+#ORDER: chronological (oldest first)
+#FORMAT: entries are delimited by '=== ENTRY n ===' / '=== END ENTRY n ==='. Fields are 'KEY: value'. Multi-line blocks are '<<<NAME' ... 'NAME>>>'. Bodies are pretty-printed JSON when parseable. '-' means no value.
+
+## INDEX
+# n | kind | result | status | duration_ms | method | url_or_api
+1 | NETWORK | OK | 200 | 3 | POST | https://api.example.com/v1/login
+2 | NATIVE | FAIL | fail | 4 | NATIVE | getUserLocation
+
+## SECTION: NETWORK (CURL) — 1 entries
+=== ENTRY 1 ===
+KIND: NETWORK
+ID: usr_fuoipjt
+TIME: 2026-10-23T11:29:05.770Z
+METHOD: POST
+URL: https://api.example.com/v1/login
+STATUS: 200
+RESULT: OK
+DURATION_MS: 3
+ERROR: -
+<<<CURL
+curl -X POST "https://api.example.com/v1/login" -H "Content-Type: application/json" -d '{"phone":"0812xxxx"}'
+CURL>>>
+<<<REQUEST_HEADERS
+{
+  "Content-Type": "application/json"
+}
+REQUEST_HEADERS>>>
+<<<REQUEST_BODY
+{
+  "phone": "0812xxxx"
+}
+REQUEST_BODY>>>
+<<<RESPONSE_HEADERS
+{
+  "content-type": "application/json"
+}
+RESPONSE_HEADERS>>>
+<<<RESPONSE_BODY
+{
+  "token": "abc"
+}
+RESPONSE_BODY>>>
+=== END ENTRY 1 ===
+
+## SECTION: NATIVE API — 1 entries
+=== ENTRY 2 ===
+KIND: NATIVE
+ID: nat_1q8f1wn
+TIME: 2026-10-23T11:29:05.771Z
+API_NAME: getUserLocation
+CALL: invokeNativePlugin
+STATUS: fail
+RESULT: FAIL
+DURATION_MS: 4
+ERROR: {"errCode":-1,"errMsg":"permission denied"}
+<<<ARGS
+{
+  "accuracy": "high"
+}
+ARGS>>>
+<<<RESPONSE
+(empty)
+RESPONSE>>>
+=== END ENTRY 2 ===
+
+#END_OF_EXPORT

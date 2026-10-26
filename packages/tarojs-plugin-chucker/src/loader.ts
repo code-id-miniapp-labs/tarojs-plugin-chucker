@@ -6,7 +6,7 @@ function chuckerAppLoader(this: any, source: string): string {
   const injection = `
 import { initChucker } from 'miniapp-chucker';
 try {
-  initChucker();
+  initChucker({ navigatePath: process.env.CHUCKER_ROUTE });
 } catch (e) {
   console.error('[miniapp-chucker] Auto-initialization error:', e);
 }
