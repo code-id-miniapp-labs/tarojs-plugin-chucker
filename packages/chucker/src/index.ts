@@ -1,6 +1,8 @@
 import { chuckerStore } from "./store";
 import { initInterceptors, patchPageAndComponent } from "./interceptor";
 export { generateCurl, formatJson } from "./utils";
+export { buildExportText } from "./export";
+export type { ExportOptions } from "./export";
 
 export interface ChuckerOptions {
   /**
@@ -18,7 +20,7 @@ export interface ChuckerOptions {
   /**
    * Override the URL path for the Chucker inspector page.
    * Useful if you placed the page at a non-standard path.
-   * @default "/pages/chucker/index"
+   * @default "/chucker/index" (sub-package), falls back to "/pages/chucker/index"
    */
   navigatePath?: string;
   /**
@@ -55,7 +57,7 @@ export function initChucker(options?: ChuckerOptions) {
 
   chuckerStore.init(options?.maxLogs ?? 100);
   initInterceptors({ console: options?.console });
-  patchPageAndComponent(options?.navigatePath ?? "/pages/chucker/index");
+  patchPageAndComponent(options?.navigatePath ?? "/chucker/index");
 
   console.log("[miniapp-chucker] Initialized.");
 }

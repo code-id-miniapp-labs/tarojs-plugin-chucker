@@ -19,13 +19,19 @@ Component({
   methods: {
     navigate: function () {
       var customUrl = (this.data && this.data.url) || (this.properties && this.properties.url);
-      var url = customUrl || "/miniprogram_npm/miniapp-plugin-chucker/pages/chucker/index";
+      var url = customUrl || "/chucker/index";
       var api = getApi();
       if (api && typeof api.navigateTo === "function") {
         api.navigateTo({
           url: url,
           fail: function () {
-            api.navigateTo({ url: "/pages/chucker/index" });
+            // Legacy main-package layouts
+            api.navigateTo({
+              url: "/miniprogram_npm/miniapp-plugin-chucker/pages/chucker/index",
+              fail: function () {
+                api.navigateTo({ url: "/pages/chucker/index" });
+              },
+            });
           },
         });
       }

@@ -3,6 +3,8 @@ import Taro from "@tarojs/taro";
 import { View, Text, ScrollView, Input } from "@tarojs/components";
 import { chuckerStore, ChuckerLog, generateCurl, formatJson } from "miniapp-chucker";
 import { useVirtualList } from "../hooks/useVirtual";
+// Bundled copy of the exporter: works even if an older miniapp-chucker core is resolved.
+import { buildExportText } from "../export";
 import { CloseIcon } from "./icons";
 
 export const Chucker: React.FC = () => {
@@ -83,6 +85,41 @@ export const Chucker: React.FC = () => {
           chuckerStore.clear();
           setSelectedLogId(null);
         }
+      },
+    });
+  };
+
+  const handleExport = () => {
+    const allLogs = chuckerStore.getLogs();
+    if (!allLogs.length) {
+      Taro.showToast({ title: "No logs yet", icon: "none", duration: 1500 });
+      return;
+    }
+    Taro.showActionSheet({
+      itemList: ["Api Network", "Native"],
+      success: (res) => {
+        const isApi = res.tapIndex === 0;
+        const picked = isApi
+          ? allLogs.filter((log) => isNetworkLog(log))
+          : allLogs.filter((log) => log.type === "native");
+        if (!picked.length) {
+          Taro.showToast({
+            title: isApi ? "No API logs" : "No native logs",
+            icon: "none",
+            duration: 1500,
+          });
+          return;
+        }
+        const text = isApi
+          ? picked
+              .slice()
+              .reverse()
+              .map((log) =>
+                generateCurl(log.url, log.method, log.requestHeaders || {}, log.requestData),
+              )
+              .join("\n\n")
+          : buildExportText(picked);
+        handleCopyText(text, "Export copied!");
       },
     });
   };
@@ -809,6 +846,16 @@ export const Chucker: React.FC = () => {
           </View>
         </View>
         <View style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "8px" }}>
+          <View
+            onClick={handleExport}
+            style={{
+              padding: "4px 10px",
+              borderRadius: "6px",
+              border: "1px solid #27272a",
+            }}
+          >
+            <Text style={{ fontSize: "12px", color: "#a1a1aa", fontWeight: 500 }}>Export</Text>
+          </View>
           <View
             onClick={handleClear}
             style={{

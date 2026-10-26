@@ -589,3 +589,7 @@ page {
   word-break: break-all;
   line-height: 1.5;
 }
+
+/* Export button sits left of Clear */
+.header-right { display: flex; flex-direction: row; align-items: center; }
+.btn-export { margin-right: 16rpx; }

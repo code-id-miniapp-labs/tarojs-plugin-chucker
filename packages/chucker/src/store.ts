@@ -1,3 +1,5 @@
+import { buildExportText, ExportOptions } from "./export";
+
 export interface ChuckerLog {
   id: string;
   type: "network" | "native" | (string & {});
@@ -172,6 +174,11 @@ class ChuckerStore {
     return this.logs;
   }
 
+  /** Build an AI-friendly .txt export (all cURL + native API calls). */
+  public exportText(options?: ExportOptions): string {
+    return buildExportText(this.logs, options);
+  }
+
   public clear() {
     this.logs = [];
     this.executeNotify();
@@ -250,6 +257,19 @@ const globalObj: any =
 if (!globalObj.__CHUCKER_STORE__) {
   globalObj.__CHUCKER_STORE__ = new ChuckerStore();
 }
+
+// An older runtime (e.g. a duplicate/outdated miniapp-chucker copy) may have created the
+// singleton first. Graft any missing methods onto it so newer UI code never crashes.
+(function upgradeExistingStore(store: any) {
+  const proto: any = ChuckerStore.prototype;
+  Object.getOwnPropertyNames(proto).forEach((name) => {
+    if (name !== "constructor" && typeof store[name] !== "function") {
+      try {
+        store[name] = proto[name];
+      } catch (_e) {}
+    }
+  });
+})(globalObj.__CHUCKER_STORE__);
 
 export const chuckerStore: ChuckerStore = globalObj.__CHUCKER_STORE__;
 
